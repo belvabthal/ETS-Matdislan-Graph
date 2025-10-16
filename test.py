@@ -10,21 +10,35 @@ def create_bandung_graph():
     """
     G = nx.Graph()
     locations = {
-        'Stasiun Bandung': (2, 0), 'Jalan Braga': (2.5, 0.5), 'Alun-Alun Bandung': (1.5, 0.8),
-        'Gedung Sate': (2.8, 1.2), 'Monumen Perjuangan': (2.9, 1.8), 'Kebun Binatang Bandung': (3.2, 2.2),
-        'Hutan Babakan Siliwangi': (3.0, 2.6), 'Teras Cikapundung': (2.8, 2.9), 'Cihampelas Walk': (3.8, 3.0),
-        'Museum Srihadi Soedarsono ': (2.6, 3.5), 'Pipinos Bakery ': (2.5, 3.8),
-        'Kurokoffe ': (2.2, 3.9), 'Jonn & Sons ': (2.3, 4.1),
-        'Warung Sate Bu Ngantuk ': (2.0, 4.4), 'Dago Pakar': (4.5, 4.5), 'Punclut': (3.5, 5.0),
-        'Sarae Hills ': (3.8, 5.8), 'Villa Niis': (4.0, 6.2), 'Ramen Bajuri ': (4.8, 6.8),
-        'Floating Market ': (5.5, 7.2), 'Farmhouse ': (6.0, 6.5), 'De Ranch ': (6.5, 7.0),
-        'Trans Studio Bandung': (6.0, 1.0), 'Saung Angklung Udjo': (5.5, 2.0)
+        'Alun-Alun Bandung': (250, -200),
+        'Trans Studio Bandung': (650, -150),
+        'Stasiun Bandung': (100, -100),
+        'Jalan Braga': (350, -50),
+        'Saung Angklung Udjo': (770, 150),
+        'Gedung Sate': (450, 100),
+        'Monumen Perjuangan': (350, 200),
+        'Cihampelas Walk': (150, 150),
+        'Kebun Binatang Bandung': (250, 300),
+        'Hutan Babakan Siliwangi': (280, 380),
+        'Teras Cikapundung': (220, 420),
+        'Pipinos Bakery (Ciumbuleuit)': (0, 550),
+        'Museum Srihadi Soedarsono (Ciumbuleuit)': (150, 500),
+        'Warung Sate Bu Ngantuk (Ciumbuleuit)': (250, 580),
+        'Kurokoffe (Ciumbuleuit)': (80, 620),
+        'Jonn & Sons (Ciumbuleuit)': (50, 680),
+        'Dago Pakar': (700, 550),
+        'Punclut': (350, 650),
+        'Farmhouse (Lembang)': (400, 750),
+        'Sarae Hills (Pagermaneuh)': (550, 780),
+        'Villa Niis': (580, 850),
+        'Ramen Bajuri (Lembang)': (300, 850),
+        'Floating Market (Lembang)': (650, 900),
+        'De Ranch (Lembang)': (750, 950)
     }
     for loc, pos in locations.items(): G.add_node(loc, pos=pos)
     
-    # Daftar edge dengan bobot yang sudah diperbarui & ditambah dari data Gmaps
+    # Daftar edge dengan nama yang sudah disesuaikan dengan dictionary 'locations'
     edges = [
-        # == DATA BARU DARI GMAPS ==
         ('Alun-Alun Bandung', 'Jalan Braga', 3),
         ('Alun-Alun Bandung', 'Stasiun Bandung', 6),
         ('Alun-Alun Bandung', 'Gedung Sate', 9),
@@ -37,29 +51,28 @@ def create_bandung_graph():
         ('Gedung Sate', 'Trans Studio Bandung', 11),
         ('Monumen Perjuangan', 'Saung Angklung Udjo', 12),
         ('Saung Angklung Udjo', 'Trans Studio Bandung', 13),
-        
-        # == DATA LAMA YANG MASIH RELEVAN (ESTIMASI) ==
+
         ('Monumen Perjuangan', 'Kebun Binatang Bandung', 5),
         ('Kebun Binatang Bandung', 'Hutan Babakan Siliwangi', 2),
         ('Hutan Babakan Siliwangi', 'Teras Cikapundung', 1),
         ('Teras Cikapundung', 'Cihampelas Walk', 3),
         ('Kebun Binatang Bandung', 'Cihampelas Walk', 6),
-        ('Teras Cikapundung', 'Museum Srihadi Soedarsono ', 4),
-        ('Museum Srihadi Soedarsono ', 'Pipinos Bakery ', 3),
-        ('Pipinos Bakery ', 'Kurokoffe ', 2),
-        ('Kurokoffe ', 'Jonn & Sons ', 2),
-        ('Jonn & Sons ', 'Warung Sate Bu Ngantuk ', 3),
-        ('Warung Sate Bu Ngantuk ', 'Punclut', 9),
+        ('Teras Cikapundung', 'Museum Srihadi Soedarsono (Ciumbuleuit)', 4),
+        ('Museum Srihadi Soedarsono (Ciumbuleuit)', 'Pipinos Bakery (Ciumbuleuit)', 3),
+        ('Pipinos Bakery (Ciumbuleuit)', 'Kurokoffe (Ciumbuleuit)', 2),
+        ('Kurokoffe (Ciumbuleuit)', 'Jonn & Sons (Ciumbuleuit)', 2),
+        ('Jonn & Sons (Ciumbuleuit)', 'Warung Sate Bu Ngantuk (Ciumbuleuit)', 3),
+        ('Warung Sate Bu Ngantuk (Ciumbuleuit)', 'Punclut', 9),
         ('Cihampelas Walk', 'Dago Pakar', 16),
-        ('Museum Srihadi Soedarsono ', 'Dago Pakar', 15),
+        ('Museum Srihadi Soedarsono (Ciumbuleuit)', 'Dago Pakar', 15),
         ('Dago Pakar', 'Punclut', 13),
-        ('Punclut', 'Sarae Hills ', 2),
-        ('Sarae Hills ', 'Villa Niis', 7),
-        ('Villa Niis', 'Ramen Bajuri ', 8),
-        ('Ramen Bajuri ', 'Floating Market ', 5),
-        ('Floating Market ', 'Farmhouse ', 8),
-        ('Farmhouse ', 'De Ranch ', 9),
-        ('Punclut', 'De Ranch ', 12),
+        ('Punclut', 'Sarae Hills (Pagermaneuh)', 2),
+        ('Sarae Hills (Pagermaneuh)', 'Villa Niis', 7),
+        ('Villa Niis', 'Ramen Bajuri (Lembang)', 8),
+        ('Ramen Bajuri (Lembang)', 'Floating Market (Lembang)', 5),
+        ('Floating Market (Lembang)', 'Farmhouse (Lembang)', 8),
+        ('Farmhouse (Lembang)', 'De Ranch (Lembang)', 9),
+        ('Punclut', 'De Ranch (Lembang)', 12),
     ]
     for u, v, w in edges: G.add_edge(u, v, weight=w)
     return G, locations
