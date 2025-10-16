@@ -13,11 +13,11 @@ def create_bandung_graph():
         'Stasiun Bandung': (2, 0), 'Jalan Braga': (2.5, 0.5), 'Alun-Alun Bandung': (1.5, 0.8),
         'Gedung Sate': (2.8, 1.2), 'Monumen Perjuangan': (2.9, 1.8), 'Kebun Binatang Bandung': (3.2, 2.2),
         'Hutan Babakan Siliwangi': (3.0, 2.6), 'Teras Cikapundung': (2.8, 2.9), 'Cihampelas Walk': (3.8, 3.0),
-        'Museum Srihadi Soedarsono (Ciumbuleuit)': (2.6, 3.5), 'Pipinos Bakery (Ciumbuleuit)': (2.5, 3.8),
-        'Kurokoffe (Ciumbuleuit)': (2.2, 3.9), 'Jonn & Sons (Ciumbuleuit)': (2.3, 4.1),
-        'Warung Sate Bu Ngantuk (Ciumbuleuit)': (2.0, 4.4), 'Dago Pakar': (4.5, 4.5), 'Punclut': (3.5, 5.0),
-        'Sarae Hills (Pagermaneuh)': (3.8, 5.8), 'Villa Niis': (4.0, 6.2), 'Ramen Bajuri (Lembang)': (4.8, 6.8),
-        'Floating Market (Lembang)': (5.5, 7.2), 'Farmhouse (Lembang)': (6.0, 6.5), 'De Ranch (Lembang)': (6.5, 7.0),
+        'Museum Srihadi Soedarsono ': (2.6, 3.5), 'Pipinos Bakery ': (2.5, 3.8),
+        'Kurokoffe ': (2.2, 3.9), 'Jonn & Sons ': (2.3, 4.1),
+        'Warung Sate Bu Ngantuk ': (2.0, 4.4), 'Dago Pakar': (4.5, 4.5), 'Punclut': (3.5, 5.0),
+        'Sarae Hills ': (3.8, 5.8), 'Villa Niis': (4.0, 6.2), 'Ramen Bajuri ': (4.8, 6.8),
+        'Floating Market ': (5.5, 7.2), 'Farmhouse ': (6.0, 6.5), 'De Ranch ': (6.5, 7.0),
         'Trans Studio Bandung': (6.0, 1.0), 'Saung Angklung Udjo': (5.5, 2.0)
     }
     for loc, pos in locations.items(): G.add_node(loc, pos=pos)
@@ -25,41 +25,41 @@ def create_bandung_graph():
     # Daftar edge dengan bobot yang sudah diperbarui & ditambah dari data Gmaps
     edges = [
         # == DATA BARU DARI GMAPS ==
-        ('Alun-Alun Bandung', 'Jalan Braga', 5),
+        ('Alun-Alun Bandung', 'Jalan Braga', 3),
         ('Alun-Alun Bandung', 'Stasiun Bandung', 6),
-        ('Alun-Alun Bandung', 'Gedung Sate', 10),
-        ('Jalan Braga', 'Gedung Sate', 9),
+        ('Alun-Alun Bandung', 'Gedung Sate', 9),
+        ('Jalan Braga', 'Gedung Sate', 4),
         ('Jalan Braga', 'Stasiun Bandung', 5),
-        ('Jalan Braga', 'Trans Studio Bandung', 13),
-        ('Stasiun Bandung', 'Gedung Sate', 10),
+        ('Jalan Braga', 'Trans Studio Bandung', 11),
+        ('Stasiun Bandung', 'Gedung Sate', 8),
         ('Gedung Sate', 'Monumen Perjuangan', 6),
-        ('Gedung Sate', 'Saung Angklung Udjo', 13),
-        ('Gedung Sate', 'Trans Studio Bandung', 14),
-        ('Monumen Perjuangan', 'Saung Angklung Udjo', 15),
-        ('Saung Angklung Udjo', 'Trans Studio Bandung', 16),
+        ('Gedung Sate', 'Saung Angklung Udjo', 10),
+        ('Gedung Sate', 'Trans Studio Bandung', 11),
+        ('Monumen Perjuangan', 'Saung Angklung Udjo', 12),
+        ('Saung Angklung Udjo', 'Trans Studio Bandung', 13),
         
         # == DATA LAMA YANG MASIH RELEVAN (ESTIMASI) ==
-        ('Monumen Perjuangan', 'Kebun Binatang Bandung', 10),
-        ('Kebun Binatang Bandung', 'Hutan Babakan Siliwangi', 8),
-        ('Hutan Babakan Siliwangi', 'Teras Cikapundung', 5),
-        ('Teras Cikapundung', 'Cihampelas Walk', 15),
-        ('Kebun Binatang Bandung', 'Cihampelas Walk', 10),
-        ('Teras Cikapundung', 'Museum Srihadi Soedarsono (Ciumbuleuit)', 10),
-        ('Museum Srihadi Soedarsono (Ciumbuleuit)', 'Pipinos Bakery (Ciumbuleuit)', 8),
-        ('Pipinos Bakery (Ciumbuleuit)', 'Kurokoffe (Ciumbuleuit)', 3),
-        ('Kurokoffe (Ciumbuleuit)', 'Jonn & Sons (Ciumbuleuit)', 2),
-        ('Jonn & Sons (Ciumbuleuit)', 'Warung Sate Bu Ngantuk (Ciumbuleuit)', 5),
-        ('Warung Sate Bu Ngantuk (Ciumbuleuit)', 'Punclut', 20),
-        ('Cihampelas Walk', 'Dago Pakar', 25),
-        ('Museum Srihadi Soedarsono (Ciumbuleuit)', 'Dago Pakar', 22),
-        ('Dago Pakar', 'Punclut', 15),
-        ('Punclut', 'Sarae Hills (Pagermaneuh)', 15),
-        ('Sarae Hills (Pagermaneuh)', 'Villa Niis', 8),
-        ('Villa Niis', 'Ramen Bajuri (Lembang)', 10),
-        ('Ramen Bajuri (Lembang)', 'Floating Market (Lembang)', 15),
-        ('Floating Market (Lembang)', 'Farmhouse (Lembang)', 10),
-        ('Farmhouse (Lembang)', 'De Ranch (Lembang)', 12),
-        ('Punclut', 'De Ranch (Lembang)', 25),
+        ('Monumen Perjuangan', 'Kebun Binatang Bandung', 5),
+        ('Kebun Binatang Bandung', 'Hutan Babakan Siliwangi', 2),
+        ('Hutan Babakan Siliwangi', 'Teras Cikapundung', 1),
+        ('Teras Cikapundung', 'Cihampelas Walk', 3),
+        ('Kebun Binatang Bandung', 'Cihampelas Walk', 6),
+        ('Teras Cikapundung', 'Museum Srihadi Soedarsono ', 4),
+        ('Museum Srihadi Soedarsono ', 'Pipinos Bakery ', 3),
+        ('Pipinos Bakery ', 'Kurokoffe ', 2),
+        ('Kurokoffe ', 'Jonn & Sons ', 2),
+        ('Jonn & Sons ', 'Warung Sate Bu Ngantuk ', 3),
+        ('Warung Sate Bu Ngantuk ', 'Punclut', 9),
+        ('Cihampelas Walk', 'Dago Pakar', 16),
+        ('Museum Srihadi Soedarsono ', 'Dago Pakar', 15),
+        ('Dago Pakar', 'Punclut', 13),
+        ('Punclut', 'Sarae Hills ', 2),
+        ('Sarae Hills ', 'Villa Niis', 7),
+        ('Villa Niis', 'Ramen Bajuri ', 8),
+        ('Ramen Bajuri ', 'Floating Market ', 5),
+        ('Floating Market ', 'Farmhouse ', 8),
+        ('Farmhouse ', 'De Ranch ', 9),
+        ('Punclut', 'De Ranch ', 12),
     ]
     for u, v, w in edges: G.add_edge(u, v, weight=w)
     return G, locations
@@ -147,6 +147,12 @@ def visualize_tour(graph, locations, tour, start_point, end_point):
     tour_edges = [(tour[i], tour[i+1]) for i in range(len(tour)-1)]
     nx.draw_networkx_edges(graph, pos, edgelist=tour_edges,
                           width=2.5, edge_color='red', arrows=True, arrowsize=20, ax=ax)
+    edge_labels = {
+        (u, v): str(int(d['weight']))
+        for u, v, d in graph.edges(data=True)
+        # if (u, v) in tour_edges or (v, u) in tour_edges
+    }
+    nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels, font_size=8, label_pos=0.5, font_color='black', ax=ax)
     for i, node in enumerate(tour):
         x, y = pos[node]
         ax.text(x, y + 0.18, f'#{i+1}', fontsize=10, fontweight='bold', color='darkred', ha='center',
@@ -183,6 +189,7 @@ def get_user_choice(prompt, choices, exclude=None):
                 else: print("! Lokasi sudah dipilih, silakan pilih yang lain.")
             else: print("! Nomor tidak valid.")
         except ValueError: print("! Masukkan harus berupa angka.")
+        
 def get_user_choices(prompt, choices, exclude=None):
     if exclude is None: exclude = []
     while True:
