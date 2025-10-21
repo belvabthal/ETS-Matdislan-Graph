@@ -5,6 +5,7 @@ __pycache__/
 
 #image
 *.png
+*.json
 
 # C extensions
 *.so
