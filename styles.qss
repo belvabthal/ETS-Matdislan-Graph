@@ -1,0 +1,88 @@
+/* General Style */
+* {
+    color: #FFFFFF;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+}
+
+/* Main Window and Widgets */
+QMainWindow, QWidget {
+    background-color: #2E2E2E;
+}
+
+/* Group Boxes for Organization */
+QGroupBox {
+    background-color: #3C3C3C;
+    border: 1px solid #555555;
+    border-radius: 5px;
+    margin-top: 1ex; /* leave space at the top for the title */
+    font-weight: bold;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 5px;
+    background-color: #3C3C3C;
+    border-radius: 5px;
+}
+
+/* Labels */
+QLabel {
+    color: #CCCCCC;
+    background-color: transparent;
+}
+
+/* Input Widgets */
+QComboBox, QSpinBox, QListWidget, QTextEdit {
+    background-color: #424242;
+    border: 1px solid #555555;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+QComboBox::drop-down {
+    border: none;
+}
+
+QComboBox::down-arrow {
+    image: url(down_arrow.png); /* Anda bisa menambahkan ikon jika mau */
+}
+
+QListWidget::item:selected {
+    background-color: #0078D7; /* Warna biru untuk item terpilih */
+}
+
+/* Buttons */
+QPushButton {
+    background-color: #0078D7;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #005A9E;
+}
+
+QPushButton:pressed {
+    background-color: #00396E;
+}
+
+/* Scroll Bars */
+QScrollBar:vertical {
+    border: none;
+    background: #424242;
+    width: 10px;
+    margin: 0px 0px 0px 0px;
+}
+QScrollBar::handle:vertical {
+    background: #6E6E6E;
+    min-height: 20px;
+    border-radius: 5px;
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}
