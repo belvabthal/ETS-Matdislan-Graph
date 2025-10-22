@@ -314,10 +314,12 @@ def visualize_tour(graph, tour, start_point, end_point, total_time_spent, total_
     tour_nodes = set(tour)
     node_colors = {node: ('gold' if node in tour_nodes else 'lightgray') for node in graph.nodes()}
     
+    # === PERUBAHAN DI SINI ===
     if start_point in graph.nodes():
-        node_colors[start_point] = 'lightgreen'
+        node_colors[start_point] = '#F57C00' # Diubah dari 'lightgreen'
     if end_point in graph.nodes():
         node_colors[end_point] = 'lightcoral'
+    # =========================
     
     # Filter node colors hanya untuk node yang ada di 'pos'
     nodes_with_pos = list(pos.keys())
@@ -329,7 +331,7 @@ def visualize_tour(graph, tour, start_point, end_point, total_time_spent, total_
         # Filter tour_edges hanya untuk edge yang kedua nodenya ada di 'pos'
         valid_tour_edges = [(u, v) for u, v in zip(tour[:-1], tour[1:]) if u in pos and v in pos]
         nx.draw_networkx_edges(graph, pos, edgelist=valid_tour_edges,
-                              width=2.0, edge_color='red', arrows=True, arrowsize=15, ax=ax)
+                              width=2.0, edge_color='#F57C00', arrows=True, arrowsize=15, ax=ax)
     
     for i, node in enumerate(tour):
         if node in pos:
@@ -337,10 +339,13 @@ def visualize_tour(graph, tour, start_point, end_point, total_time_spent, total_
             ax.text(x, y + 25, f'#{i+1}', fontsize=8, fontweight='bold', color='darkred', ha='center',
                     bbox=dict(boxstyle='circle,pad=0.2', facecolor='white', alpha=0.6))
     
-    legend_elements = [ plt.Line2D([0], [0], marker='o', color='w', label='Start', markerfacecolor='lightgreen', ms=10),
+    # === PERUBAHAN DI SINI ===
+    legend_elements = [ plt.Line2D([0], [0], marker='o', color='w', label='Start', markerfacecolor='#F57C00', ms=10), # Diubah
                         plt.Line2D([0], [0], marker='o', color='w', label='End', markerfacecolor='lightcoral', ms=10),
                         plt.Line2D([0], [0], marker='o', color='w', label='Dikunjungi', markerfacecolor='gold', ms=10),
-                        plt.Line2D([0], [0], color='red', lw=2, label='Rute Tur')]
+                        plt.Line2D([0], [0], color='#F57C00', lw=2, label='Rute Tur')]
+    # =========================
+    
     ax.legend(handles=legend_elements, loc='upper right', fontsize=8)
     try: # Gunakan try-except untuk mencegah error jika figure belum siap
       ax.figure.tight_layout()

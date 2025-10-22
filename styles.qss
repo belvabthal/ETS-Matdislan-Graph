@@ -1,88 +1,235 @@
-/* General Style */
-* {
-    color: #FFFFFF;
-    font-family: Arial, sans-serif;
-    font-size: 13px;
+/* * styles.qss
+ * Tema Oranye Terang (Warm Orange Light Mode) untuk Aplikasi Tur Kuliner
+ */
+
+/* Pengaturan Global */
+QWidget {
+    background-color: #F4F4F4; /* Latar belakang utama (putih pudar) */
+    color: #2D2D2D;            /* Warna teks utama (gelap) */
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 10pt;
+    border: none;
 }
 
-/* Main Window and Widgets */
-QMainWindow, QWidget {
-    background-color: #2E2E2E;
+/* Latar belakang window utama */
+QMainWindow {
+    background-color: #F4F4F4;
 }
 
-/* Group Boxes for Organization */
+/* Grup Kontainer (1. Tentukan, 2. Pilih, 3. Hasil) */
 QGroupBox {
-    background-color: #3C3C3C;
-    border: 1px solid #555555;
-    border-radius: 5px;
-    margin-top: 1ex; /* leave space at the top for the title */
+    background-color: #FFFFFF; /* Latar belakang grup (putih bersih) */
+    border: 1px solid #D0D0D0; /* Border abu-abu muda */
+    border-radius: 8px;
+    margin-top: 10px; /* Memberi ruang untuk judul */
     font-weight: bold;
 }
 
 QGroupBox::title {
     subcontrol-origin: margin;
     subcontrol-position: top left;
-    padding: 0 5px;
-    background-color: #3C3C3C;
-    border-radius: 5px;
+    padding: 0 5px 0 5px;
+    left: 10px;
+    color: #E65100; /* Warna Judul (Oranye tua agar lebih kontras) */
 }
 
-/* Labels */
+/* Label Teks */
 QLabel {
-    color: #CCCCCC;
     background-color: transparent;
+    color: #2D2D2D;
+    font-weight: normal;
 }
 
-/* Input Widgets */
-QComboBox, QSpinBox, QListWidget, QTextEdit {
-    background-color: #424242;
-    border: 1px solid #555555;
-    border-radius: 4px;
-    padding: 5px;
-}
-
-QComboBox::drop-down {
-    border: none;
-}
-
-QComboBox::down-arrow {
-    image: url(down_arrow.png); /* Anda bisa menambahkan ikon jika mau */
-}
-
-QListWidget::item:selected {
-    background-color: #0078D7; /* Warna biru untuk item terpilih */
-}
-
-/* Buttons */
+/* Tombol Utama */
 QPushButton {
-    background-color: #0078D7;
-    color: white;
+    background-color: #F57C00; /* Warna Tombol (Oranye) */
+    color: #FFFFFF;            /* Teks Tombol (Putih) */
     border: none;
-    padding: 10px;
+    padding: 8px 16px;
     border-radius: 5px;
     font-weight: bold;
 }
 
 QPushButton:hover {
-    background-color: #005A9E;
+    background-color: #FFA726; /* Oranye lebih terang saat disentuh */
 }
 
 QPushButton:pressed {
-    background-color: #00396E;
+    background-color: #E65100; /* Oranye lebih gelap saat ditekan */
 }
 
-/* Scroll Bars */
+/* Widget Input: Dropdown dan SpinBox */
+QComboBox, QSpinBox {
+    background-color: #FFFFFF;
+    border: 1px solid #C0C0C0; /* Border abu-abu */
+    border-radius: 5px;
+    padding: 5px;
+}
+
+QComboBox:focus, QSpinBox:focus {
+    border: 1px solid #F57C00; /* Border oranye saat dipilih */
+}
+
+/* Styling untuk daftar dropdown QComboBox */
+QComboBox QAbstractItemView {
+    background-color: #FFFFFF;
+    selection-background-color: #F57C00; /* Pilihan (Oranye) */
+    selection-color: #FFFFFF;
+    border: 1px solid #D0D0D0;
+}
+
+/* List Widget (Lokasi Wajib Kunjung) */
+QListWidget {
+    background-color: #FFFFFF;
+    border: 1px solid #D0D0D0;
+    border-radius: 5px;
+    padding: 2px;
+}
+
+QListWidget::item {
+    padding: 5px;
+    color: #2D2D2D; /* Teks item default */
+}
+
+QListWidget::item:selected {
+    background-color: #F57C00; /* Warna Pilihan (Oranye) */
+    color: #FFFFFF; /* Teks pilihan (Putih) */
+}
+
+/* Kotak Teks Hasil */
+QTextEdit {
+    background-color: #FFFFFF;
+    border: 1px solid #D0D0D0;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+/* Scroll Bar Styling */
 QScrollBar:vertical {
     border: none;
-    background: #424242;
-    width: 10px;
+    background: #E0E0E0; /* Latar belakang scrollbar (abu-abu muda) */
+    width: 12px;
     margin: 0px 0px 0px 0px;
 }
 QScrollBar::handle:vertical {
-    background: #6E6E6E;
+    background: #F57C00; /* Handle (Oranye) */
     min-height: 20px;
-    border-radius: 5px;
+    border-radius: 6px;
 }
 QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
     height: 0px;
 }
+
+QScrollBar:horizontal {
+    border: none;
+    background: #E0E0E0;
+    height: 12px;
+    margin: 0px 0px 0px 0px;
+}
+QScrollBar::handle:horizontal {
+    background: #F57C00; /* Handle (Oranye) */
+    min-width: 20px;
+    border-radius: 6px;
+}
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+    width: 0px;
+}
+
+/* --- Styling Tambahan untuk QSpinBox --- */
+QSpinBox {
+    padding-right: 20px; 
+}
+
+QSpinBox::up-button, QSpinBox::down-button {
+    background-color: #E0E0E0;
+    border: 1px solid #C0C0C0;
+    width: 18px;
+    border-radius: 4px;
+}
+
+QSpinBox::up-button {
+    subcontrol-position: top right;
+    margin-top: 2px;
+    margin-right: 2px;
+    margin-bottom: 1px;
+}
+
+QSpinBox::down-button {
+    subcontrol-position: bottom right;
+    margin-bottom: 2px;
+    margin-right: 2px;
+}
+
+QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+    background-color: #F57C00;
+    border: 1px solid #E65100;
+}
+
+/* Mengatur Ikon Panah di dalam Tombol */
+QSpinBox::up-arrow {
+    image: url(icons:sp_up-arrow.png);
+    width: 10px;
+    height: 10px;
+}
+QSpinBox::down-arrow {
+    image: url(icons:sp_down-arrow.png);
+    width: 10px;
+    height: 10px;
+}
+
+/* === PERUBAHAN DI SINI === */
+/* Mengubah ikon panah menjadi 'state: on' (lebih terang) saat tombol di-hover */
+QSpinBox::up-button:hover QSpinBox::up-arrow {
+    image: url(icons:sp_up-arrow.png):on;
+}
+QSpinBox::down-button:hover QSpinBox::down-arrow {
+    image: url(icons:sp_down-arrow.png):on;
+}
+/* === AKHIR PERUBAHAN === */
+
+
+/* --- Styling Tambahan untuk QComboBox (Tombol Panah) --- */
+QComboBox {
+    padding-right: 20px; 
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 18px;
+    
+    background-color: #E0E0E0;
+    border: 1px solid #C0C0C0;
+    border-radius: 4px;
+
+    margin-top: 2px;
+    margin-bottom: 2px;
+    margin-right: 2px;
+}
+
+QComboBox::drop-down:hover {
+    background-color: #F57C00;
+    border: 1px solid #E65100;
+}
+
+QComboBox::on { 
+    drop-down {
+        background-color: #F57C00;
+        border: 1px solid #E65100;
+    }
+}
+
+/* Mengatur Ikon Panah di dalam Tombol */
+QComboBox::down-arrow {
+    image: url(icons:sp_down-arrow.png);
+    width: 10px;
+    height: 10px;
+}
+
+/* === PERUBAHAN DI SINI === */
+/* Mengubah ikon panah menjadi 'state: on' (lebih terang) saat tombol di-hover atau aktif */
+QComboBox::drop-down:hover QComboBox::down-arrow,
+QComboBox::drop-down:on QComboBox::down-arrow {
+    image: url(icons:sp_down-arrow.png):on;
+}
+/* === AKHIR PERUBAHAN === */

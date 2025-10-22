@@ -62,7 +62,7 @@ class MainWindow(QMainWindow):
         layout.setSpacing(15)
 
         # --- Group Box: Input Utama ---
-        input_group = QGroupBox("1. Tentukan Rute & Anggaran")
+        input_group = QGroupBox("Tentukan Rute & Anggaran")
         input_layout = QGridLayout()
 
         # Pilihan Titik Awal
@@ -99,7 +99,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(input_group)
 
         # --- Group Box: Lokasi Wajib ---
-        must_visit_group = QGroupBox("2. Pilih Lokasi Wajib Kunjung (Opsional)")
+        must_visit_group = QGroupBox("Pilih Lokasi Wajib Kunjung")
         must_visit_layout = QVBoxLayout()
         
         self.must_visit_list = QListWidget()
@@ -118,7 +118,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.run_button)
         
         # --- Group Box: Hasil Analisis ---
-        results_group = QGroupBox("3. Hasil Analisis")
+        results_group = QGroupBox("Hasil Analisis")
         results_layout = QVBoxLayout()
         self.results_text = QTextEdit()
         self.results_text.setReadOnly(True)
