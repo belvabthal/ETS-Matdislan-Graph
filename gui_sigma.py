@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                              QSpinBox, QPushButton, QListWidget, QTextEdit,
                              QMessageBox, QGroupBox, QListWidgetItem)
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont
+from PyQt6.QtGui import QFont, QIcon  # <-- TAMBAHKAN INI (1 dari 2)
 
 # Integrasi Matplotlib dengan PyQt6
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -31,6 +31,7 @@ class MainWindow(QMainWindow):
         # Konfigurasi window utama
         self.setWindowTitle("Perencana Tur Kuliner Bandung")
         self.setGeometry(100, 100, 1400, 800)
+        self.setWindowIcon(QIcon("AppsLogo.png"))  # <-- TAMBAHKAN INI (2 dari 2)
 
         # Layout utama (horizontal: panel kontrol di kiri, display di kanan)
         main_layout = QHBoxLayout()
@@ -191,8 +192,18 @@ class MainWindow(QMainWindow):
         summary_html += f"<b>Rute Lengkap:</b> {' → '.join(tour)}<br>"
         summary_html += f"<b>Total Waktu Aktual:</b> {int(final_time)} menit ({final_time/60:.1f} jam)<br>"
         summary_html += f"<b>Total Biaya Aktual:</b> Rp {final_cost:,.0f}<br><br>"
-        summary_html += f"<b>Sisa Anggaran Waktu:</b> <font color='lightgreen'>{int(time_budget - final_time)} menit</font><br>"
-        summary_html += f"<b>Sisa Anggaran Biaya:</b> <font color='lightgreen'>Rp {money_budget - final_cost:,.0f}</font>"
+        
+        # Mengubah warna sisa anggaran
+        time_color = 'green'
+        if (time_budget - final_time) < 0:
+            time_color = 'red'
+            
+        money_color = 'green'
+        if (money_budget - final_cost) < 0:
+            money_color = 'red'
+
+        summary_html += f"<b>Sisa Anggaran Waktu:</b> <font color='{time_color}'>{int(time_budget - final_time)} menit</font><br>"
+        summary_html += f"<b>Sisa Anggaran Biaya:</b> <font color='{money_color}'>Rp {money_budget - final_cost:,.0f}</font>"
 
         # Tampilkan di QTextEdit
         self.results_text.setHtml(f"<h3>Log Perencanaan</h3>{log_html}<br><hr>{summary_html}")
