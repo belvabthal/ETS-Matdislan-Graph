@@ -111,15 +111,17 @@ def dijkstra(graph, start, end):
                 heapq.heappush(pq, (distance, neighbor))
     return distances[end]
 
-def find_progressive_enriched_path(graph, start, end, available_nodes, 
-                                   current_time_spent, current_cost_spent, 
+def find_progressive_enriched_path(graph, start, end, available_nodes,
+                                   current_time_spent, current_cost_spent,
                                    TIME_BUDGET, MONEY_BUDGET):
     path, current = [start], start
     remaining_nodes = set(available_nodes)
-    alpha, beta = 0.7, 0.3 
+    alpha, beta = 0.7, 0.3
 
     segment_time = 0.0
     segment_cost = 0.0
+
+    service_time_at_segment_end = graph.nodes[end].get('waktu_layanan', 0)
 
     while current != end:
         competitors = remaining_nodes | {end}
@@ -127,67 +129,71 @@ def find_progressive_enriched_path(graph, start, end, available_nodes,
 
         for competitor in competitors:
             if competitor not in graph: continue
-            
+
             dist_curr_comp = dijkstra(graph, current, competitor)
             dist_comp_end = dijkstra(graph, competitor, end)
-            
+
             if dist_curr_comp == float('inf') or dist_comp_end == float('inf'):
-                score = float('inf')
+                 score = float('inf') # Anggap tidak terjangkau
             else:
-                service_time = graph.nodes[competitor].get('waktu_layanan', 0)
+                service_time_at_competitor = graph.nodes[competitor].get('waktu_layanan', 0)
                 price = graph.nodes[competitor].get('biaya', 0)
 
-                time_if_chosen = current_time_spent + segment_time + dist_curr_comp + service_time
+                # Waktu jika kita memilih 'competitor' (termasuk layanan DI SANA)
+                time_if_chosen = current_time_spent + segment_time + dist_curr_comp + service_time_at_competitor
                 cost_if_chosen = current_cost_spent + segment_cost + price
-                
-                time_to_reach_segment_end = time_if_chosen + dist_comp_end
-                
-                if time_to_reach_segment_end > TIME_BUDGET or cost_if_chosen > MONEY_BUDGET:
-                    score = float('inf')
+
+                # Waktu estimasi total untuk menyelesaikan segmen JIKA kita memilih 'competitor' ini
+                total_estimated_time = time_if_chosen + dist_comp_end
+
+                # Jika 'competitor' BUKAN 'end', kita harus tambahkan waktu layanan 'end'
+                if competitor != end:
+                    total_estimated_time += service_time_at_segment_end
+
+                # Lakukan pengecekan dengan estimasi yang sudah akurat
+                if total_estimated_time > TIME_BUDGET or cost_if_chosen > MONEY_BUDGET:
+                    score = float('inf') # Tidak layak
                 else:
+                    # Jika layak, hitung skor heuristiknya
                     score = (alpha * dist_curr_comp) + (beta * dist_comp_end)
 
             if score < best_score:
                 best_score, best_next_stop = score, competitor
 
         if best_next_stop is None or best_score == float('inf'):
-            best_next_stop = end
-            
-            travel_time_to_end = dijkstra(graph, current, end)
-            if travel_time_to_end == float('inf') or (current_time_spent + segment_time + travel_time_to_end > TIME_BUDGET):
-                 return [start], 0.0, 0.0, f"Gagal: Anggaran waktu/rute tidak cukup untuk mencapai '{end}'."
+            # GAGAL jika tidak ada pilihan layak sama sekali (termasuk 'end')
+            return [start], 0.0, 0.0, f"Gagal: Anggaran tidak cukup untuk mencapai '{end}'."
 
+        # --- Update Path dan Biaya untuk Pilihan Terbaik ---
         path.append(best_next_stop)
         travel_time_to_stop = dijkstra(graph, current, best_next_stop)
-        segment_time += travel_time_to_stop
-        
+        segment_time += travel_time_to_stop # Tambah waktu tempuh
         current = best_next_stop
-        
-        # =============================================== #
-        #              BLOK KRUSIAL YANG BENAR            #
-        # =============================================== #
-        # Hanya tambahkan biaya/waktu jika BUKAN tujuan akhir segmen ('end')
+
+        # Tambahkan waktu layanan & biaya SELALU, baik itu stopover atau 'end'.
+        segment_time += graph.nodes[current].get('waktu_layanan', 0)
+        segment_cost += graph.nodes[current].get('biaya', 0)
+
         if current != end:
-            segment_time += graph.nodes[current].get('waktu_layanan', 0)
-            segment_cost += graph.nodes[current].get('biaya', 0)
-            
+            # Jika ini bukan 'end', remove dari 'remaining_nodes'
             if current in remaining_nodes:
                 remaining_nodes.remove(current)
-        # =============================================== #
-        
-        if current == end:
+        else:
+            # Jika ini ADALAH 'end', kita selesai. Break loop.
             break
-            
-    # Mengembalikan HANYA waktu tempuh total segmen + biaya/waktu stopover
+
+    # Mengembalikan total waktu (tempuh + layanan SEMUA node di segmen)
+    # dan total biaya (SEMUA node di segmen kecuali 'start')
     return path, segment_time, segment_cost, "Sukses"
+
 
 def final_tour_algorithm(graph, start, must_visit, end, TIME_BUDGET, MONEY_BUDGET):
     unvisited_must_visit = set(must_visit)
     final_tour, current_pos = [start], start
-    
+
     total_time = graph.nodes[start].get('waktu_layanan', 0)
     total_cost = graph.nodes[start].get('biaya', 0)
-    
+
     log_messages = [
         f"Anggaran Waktu: {TIME_BUDGET} menit ({TIME_BUDGET/60:.1f} jam)",
         f"Anggaran Biaya: Rp {MONEY_BUDGET:,.0f}",
@@ -196,10 +202,10 @@ def final_tour_algorithm(graph, start, must_visit, end, TIME_BUDGET, MONEY_BUDGE
 
     while unvisited_must_visit:
         reachable_must_visit = {
-            dest for dest in unvisited_must_visit 
+            dest for dest in unvisited_must_visit
             if dijkstra(graph, current_pos, dest) != float('inf')
         }
-        
+
         if not reachable_must_visit:
             log_messages.append(f"-> ❌ PERINGATAN: Tidak ada lokasi wajib terjangkau dari '{current_pos}'.")
             unvisited_must_visit.clear()
@@ -207,78 +213,87 @@ def final_tour_algorithm(graph, start, must_visit, end, TIME_BUDGET, MONEY_BUDGE
 
         next_destination = min(reachable_must_visit, key=lambda dest: dijkstra(graph, current_pos, dest))
         unvisited_must_visit.remove(next_destination)
-        
+
         log_messages.append(f"\nMerencanakan segmen: '{current_pos}' -> '{next_destination}'")
-        
+
+        # Pre-check kelayakan (harus bisa SELESAI di next_destination)
         travel_time_to_dest = dijkstra(graph, current_pos, next_destination)
         service_time_dest = graph.nodes[next_destination].get('waktu_layanan', 0)
         price_dest = graph.nodes[next_destination].get('biaya', 0)
-
         if (total_time + travel_time_to_dest + service_time_dest > TIME_BUDGET) or \
            (total_cost + price_dest > MONEY_BUDGET):
-            log_messages.append(f"-> ❌ GAGAL: Anggaran tidak cukup untuk lokasi wajib '{next_destination}'.")
+            log_messages.append(f"-> ❌ GAGAL: Anggaran tidak cukup untuk menyelesaikan di '{next_destination}'.")
             continue
 
         nodes_to_consider = set(graph.nodes()) - set(final_tour) - unvisited_must_visit
-        
+
         segment, seg_time, seg_cost, status = find_progressive_enriched_path(
             graph, current_pos, next_destination, nodes_to_consider,
             total_time, total_cost, TIME_BUDGET, MONEY_BUDGET
         )
-        
+
         if status != "Sukses" or len(segment) <= 1:
             log_messages.append(f"-> ❌ GAGAL: {status}")
-            return final_tour, total_time, total_cost, log_messages
+            # Hentikan tur jika gagal di tengah
+            unique_tour = []
+            for loc in final_tour:
+                if not unique_tour or unique_tour[-1] != loc: unique_tour.append(loc)
+            return unique_tour, total_time, total_cost, log_messages
+
 
         final_tour.extend(segment[1:])
-        
-        # =============================================== #
-        #          LOGIKA PENAMBAHAN BIAYA YANG BENAR     #
-        # =============================================== #
-        # seg_time = total waktu tempuh + total waktu layanan stopover
-        # seg_cost = total biaya stopover
-        
-        total_time += seg_time # Tambahkan waktu tempuh + layanan stopover
-        total_cost += seg_cost # Tambahkan biaya stopover
-        
-        # Tambahkan waktu layanan & biaya dari tujuan segmen ('must_visit' node)
-        if current_pos != next_destination: # Pastikan kita benar-benar bergerak
-            total_time += graph.nodes[next_destination].get('waktu_layanan', 0)
-            total_cost += graph.nodes[next_destination].get('biaya', 0)
-        # =============================================== #
-        
+
+        # ================================================================ #
+        #          LOGIKA PENAMBAHAN BIAYA YANG BENAR (VERSI INI)          #
+        # ================================================================ #
+        # Karena find_progressive sudah MENGHITUNG BIAYA/WAKTU 'next_destination',
+        # kita HANYA perlu menambahkan total dari segmen tersebut.
+        total_time += seg_time
+        total_cost += seg_cost
+        # ================================================================ #
+
         log_messages.append(f"-> Rute Ditemukan: {' → '.join(segment[1:])}")
         log_messages.append(f"   Status Anggaran: Waktu={int(total_time)} menit, Biaya=Rp {total_cost:,.0f}")
-        
+
         current_pos = next_destination
 
     log_messages.append(f"\nMerencanakan segmen akhir: '{current_pos}' -> '{end}'")
-    
-    if dijkstra(graph, current_pos, end) == float('inf'):
-        log_messages.append(f"-> ❌ GAGAL: Tujuan akhir '{end}' tidak terjangkau dari '{current_pos}'.")
-        return final_tour, total_time, total_cost, log_messages
 
-    nodes_to_consider = set(graph.nodes()) - set(final_tour)
-    
-    segment, seg_time, seg_cost, status = find_progressive_enriched_path(
-        graph, current_pos, end, nodes_to_consider,
-        total_time, total_cost, TIME_BUDGET, MONEY_BUDGET
-    )
-    
+    # Pre-check kelayakan untuk 'end' (harus bisa SELESAI di 'end')
+    travel_time_to_end = dijkstra(graph, current_pos, end)
+    service_time_end = graph.nodes[end].get('waktu_layanan', 0) if end in graph.nodes() else 0
+    price_end = graph.nodes[end].get('biaya', 0) if end in graph.nodes() else 0
+
+    if travel_time_to_end == float('inf'):
+         log_messages.append(f"-> ❌ GAGAL: Tujuan akhir '{end}' tidak terjangkau.")
+         status = "Gagal"
+    elif (total_time + travel_time_to_end + service_time_end > TIME_BUDGET) or \
+         (total_cost + price_end > MONEY_BUDGET):
+         log_messages.append(f"-> ❌ GAGAL: Anggaran tidak cukup untuk menyelesaikan di tujuan akhir '{end}'.")
+         status = "Gagal"
+    else:
+        # Jika layak, panggil find_progressive
+        nodes_to_consider = set(graph.nodes()) - set(final_tour)
+        segment, seg_time, seg_cost, status = find_progressive_enriched_path(
+            graph, current_pos, end, nodes_to_consider,
+            total_time, total_cost, TIME_BUDGET, MONEY_BUDGET
+        )
+
     if status == "Sukses" and len(segment) > 1:
         final_tour.extend(segment[1:])
-        total_time += seg_time # 'seg_time' sudah termasuk waktu tempuh
-        total_cost += seg_cost # 'seg_cost' sudah termasuk biaya stopover (jika ada)
-        # Kita TIDAK menambahkan biaya/waktu 'end' node (tujuan akhir tur), sesuai asumsi.
+        # Tambahkan biaya/waktu dari segmen terakhir
+        total_time += seg_time
+        total_cost += seg_cost
         log_messages.append(f"-> Rute Ditemukan: {' → '.join(segment[1:])}")
     elif status != "Sukses":
-        log_messages.append(f"-> ❌ GAGAL: {status}")
+         log_messages.append(f"-> ❌ GAGAL: {status}")
+
 
     unique_tour = []
     for loc in final_tour:
         if not unique_tour or unique_tour[-1] != loc:
             unique_tour.append(loc)
-            
+
     return unique_tour, total_time, total_cost, log_messages
 
 # --- TAHAP 4: FUNGSI VISUALISASI ---
@@ -314,12 +329,10 @@ def visualize_tour(graph, tour, start_point, end_point, total_time_spent, total_
     tour_nodes = set(tour)
     node_colors = {node: ('gold' if node in tour_nodes else 'lightgray') for node in graph.nodes()}
     
-    # === PERUBAHAN DI SINI ===
     if start_point in graph.nodes():
-        node_colors[start_point] = '#F57C00' # Diubah dari 'lightgreen'
+        node_colors[start_point] = '#F57C00'
     if end_point in graph.nodes():
         node_colors[end_point] = 'lightcoral'
-    # =========================
     
     # Filter node colors hanya untuk node yang ada di 'pos'
     nodes_with_pos = list(pos.keys())
@@ -339,13 +352,10 @@ def visualize_tour(graph, tour, start_point, end_point, total_time_spent, total_
             ax.text(x, y + 25, f'#{i+1}', fontsize=8, fontweight='bold', color='darkred', ha='center',
                     bbox=dict(boxstyle='circle,pad=0.2', facecolor='white', alpha=0.6))
     
-    # === PERUBAHAN DI SINI ===
-    legend_elements = [ plt.Line2D([0], [0], marker='o', color='w', label='Start', markerfacecolor='#F57C00', ms=10), # Diubah
+    legend_elements = [ plt.Line2D([0], [0], marker='o', color='w', label='Start', markerfacecolor='#F57C00', ms=10),
                         plt.Line2D([0], [0], marker='o', color='w', label='End', markerfacecolor='lightcoral', ms=10),
                         plt.Line2D([0], [0], marker='o', color='w', label='Dikunjungi', markerfacecolor='gold', ms=10),
                         plt.Line2D([0], [0], color='#F57C00', lw=2, label='Rute Tur')]
-    # =========================
-    
     ax.legend(handles=legend_elements, loc='upper right', fontsize=8)
     try: # Gunakan try-except untuk mencegah error jika figure belum siap
       ax.figure.tight_layout()
