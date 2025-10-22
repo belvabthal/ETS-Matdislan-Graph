@@ -121,7 +121,7 @@ ETS-Matdislan-Graph/
 
 Aplikasi mencakup 24 lokasi wisata kuliner populer di Bandung:
 
-**Area Pusat Kota**: Alun-Alun Bandung, Jalan Braga, Gedung Sate, Stasiun Bandung
+**Area Pusat Kota**: Alun-Alun Bandung, Jalan Braga, Gedung Sate, Waroeng Lokal
 
 **Area Trans Studio**: Trans Studio Bandung, Saung Angklung Udjo
 

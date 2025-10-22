@@ -15,9 +15,8 @@ def create_bandung_culinary_graph():
     # [POSISI DIPERBARUI] Database lokasi dengan koordinat yang sudah dipetakan
     locations_data = {
         # Format: 'Nama Lokasi': {'pos': (x, y), 'waktu_layanan': menit, 'biaya': IDR}
-        # Area Pusat Kota & Selatan
-        'Stasiun Bandung': {'pos': (360, 509), 'waktu_layanan': 0, 'biaya': 0},
-        'Waroeng Lokal': {'pos': (365, 530), 'waktu_layanan': 20, 'biaya': 85000},
+        # Area Pusat Kota & Selatan 360
+        'Waroeng Lokal': {'pos': (160, 500), 'waktu_layanan': 20, 'biaya': 85000},
         'Dimsum Sembilan Ayam': {'pos': (345, 545), 'waktu_layanan': 10, 'biaya': 45000},
         'Toko Roti Sidodadi': {'pos': (408, 485), 'waktu_layanan': 5, 'biaya': 100000},
         'Sudirman Street Bandung': {'pos': (415, 380), 'waktu_layanan': 15, 'biaya': 50000},
@@ -52,9 +51,9 @@ def create_bandung_culinary_graph():
     
     edges = [
         # Edges Awal Anda
-        ('Warung Bu Imas', 'Stasiun Bandung', 9),
+        ('Warung Bu Imas', 'Waroeng Lokal', 9),
         ('Warung Bu Imas', 'Jalan Braga', 7),
-        ('Stasiun Bandung', 'Sate Jando Belakang Gd Sate', 8),
+        ('Waroeng Lokal', 'Sate Jando Belakang Gd Sate', 8),
         ('Jalan Braga', 'Sate Jando Belakang Gd Sate', 4),
         ('Emperano Pizza', 'Five Monkeys Burger', 9),
         ('Emperano Pizza', 'Mie Naripan', 8),
@@ -62,12 +61,11 @@ def create_bandung_culinary_graph():
         ('Drunk Baker', 'Sudirman Street Bandung', 7),
         ('Mie Naripan', 'Bakmie Tjo Kin', 6),
         ('Bakmie Tjo Kin', 'Sate Jando Belakang Gd Sate', 3),
-        ('Bakmie Tjo Kin', 'Stasiun Bandung', 10),
-        ('Stasiun Bandung', 'Waroeng Lokal', 1),
+        ('Bakmie Tjo Kin', 'Waroeng Lokal', 10),
         ('Jalan Braga', 'Makaroni Squad', 7),
         ('Mie Naripan', 'Makaroni Squad', 8),
         ('Kedai Roti Ibu Saya', 'Sate Jando Belakang Gd Sate', 5),
-        ('Kedai Roti Ibu Saya', 'Stasiun Bandung', 8),
+        ('Kedai Roti Ibu Saya', 'Waroeng Lokal', 8),
         ('Kedai Roti Ibu Saya', 'Jonn & Sons', 7),
         ('Kurokoffe', 'Wandas Club', 1),
         ('Jalan Braga', 'Toko Roti Sidodadi', 4),
@@ -82,9 +80,8 @@ def create_bandung_culinary_graph():
         ('Mie Soobek', 'Iga Bakar Si Jangkung', 14),
 
         # [PENAMBAHAN] 8 Edge baru dari data "Google Maps" untuk konektivitas
-        ('Sudirman Street Bandung', 'Stasiun Bandung', 7),
-        ('Dimsum Sembilan Ayam', 'Stasiun Bandung', 8),
-        ('Waroeng Lokal', 'Dimsum Sembilan Ayam', 3),
+        ('Sudirman Street Bandung', 'Waroeng Lokal', 7),
+        ('Dimsum Sembilan Ayam', 'Waroeng Lokal', 8),
         ('Five Monkeys Burger', 'Sate Jando Belakang Gd Sate', 5),
         ('Mie Soobek', 'Pipinos Bakery', 12),
         ('Iga Bakar Si Jangkung', 'Kedai Roti Ibu Saya', 10),
