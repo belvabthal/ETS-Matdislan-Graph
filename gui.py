@@ -17,275 +17,26 @@ from PyQt6.QtCore import Qt, QThread, QObject, pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QIcon, QFont
 
 # --- Matplotlib Backend Setup ---
-# This ensures matplotlib embeds correctly in PyQt6
 matplotlib.use('QtAgg')
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 
 # ==============================================================================
-# TAHAP 1: LOGIKA INTI DARI SCRIPT ASLI ANDA
-# (Code from progressive_enriched_end_not0.py is pasted here)
+# [REFAKTOR] TAHAP 1: MENGIMPOR LOGIKA BACKEND
+# Semua logika inti sekarang diimpor dari file .py terpisah.
+# Pastikan 'progresive_enriched_end0.py' ada di folder yang sama.
 # ==============================================================================
+try:
+    import progresive_enriched_end0 as backend
+except ImportError:
+    print("FATAL ERROR: File 'progresive_enriched_end0.py' tidak ditemukan.")
+    print("Pastikan file tersebut berada di direktori yang sama dengan 'gui.py'.")
+    sys.exit(1)
 
-def create_bandung_culinary_graph():
-    """
-    [REFACTOR]
-    Mendefinisikan graf dengan data kuliner.
-    - Simpul (Node): Memiliki atribut 'pos', 'waktu_layanan', dan 'biaya'.
-    - Sisi (Edge): Memiliki atribut 'weight' yang merepresentasikan WAKTU TEMPUH.
-    """
-    G = nx.Graph()
-    
-    locations_data = {
-        'Alun-Alun Bandung': {'pos': (250, -200), 'waktu_layanan': 30, 'biaya': 35000},
-        'Trans Studio Bandung': {'pos': (650, -150), 'waktu_layanan': 180, 'biaya': 250000},
-        'Stasiun Bandung': {'pos': (100, -100), 'waktu_layanan': 0, 'biaya': 0},
-        'Jalan Braga': {'pos': (350, -50), 'waktu_layanan': 60, 'biaya': 70000},
-        'Saung Angklung Udjo': {'pos': (770, 150), 'waktu_layanan': 120, 'biaya': 80000},
-        'Gedung Sate': {'pos': (450, 100), 'waktu_layanan': 30, 'biaya': 15000},
-        'Monumen Perjuangan': {'pos': (350, 200), 'waktu_layanan': 20, 'biaya': 0},
-        'Cihampelas Walk': {'pos': (150, 150), 'waktu_layanan': 90, 'biaya': 100000},
-        'Kebun Binatang Bandung': {'pos': (250, 300), 'waktu_layanan': 90, 'biaya': 50000},
-        'Hutan Babakan Siliwangi': {'pos': (280, 380), 'waktu_layanan': 45, 'biaya': 0},
-        'Teras Cikapundung': {'pos': (220, 420), 'waktu_layanan': 30, 'biaya': 10000},
-        'Pipinos Bakery': {'pos': (0, 550), 'waktu_layanan': 45, 'biaya': 50000},
-        'Museum Srihadi Soedarsono': {'pos': (150, 500), 'waktu_layanan': 60, 'biaya': 20000},
-        'Warung Sate Bu Ngantuk': {'pos': (250, 580), 'waktu_layanan': 60, 'biaya': 60000},
-        'Kurokoffe': {'pos': (80, 620), 'waktu_layanan': 45, 'biaya': 45000},
-        'Jonn & Sons': {'pos': (50, 680), 'waktu_layanan': 45, 'biaya': 50000},
-        'Dago Pakar': {'pos': (700, 550), 'waktu_layanan': 90, 'biaya': 100000},
-        'Punclut': {'pos': (350, 650), 'waktu_layanan': 75, 'biaya': 75000},
-        'Farmhouse': {'pos': (400, 750), 'waktu_layanan': 120, 'biaya': 100000},
-        'Sarae Hills': {'pos': (550, 780), 'waktu_layanan': 120, 'biaya': 50000},
-        'Villa Niis': {'pos': (580, 850), 'waktu_layanan': 45, 'biaya': 60000},
-        'Ramen Bajuri': {'pos': (300, 850), 'waktu_layanan': 60, 'biaya': 40000},
-        'Floating Market': {'pos': (650, 900), 'waktu_layanan': 120, 'biaya': 40000},
-        'De Ranch': {'pos': (750, 950), 'waktu_layanan': 90, 'biaya': 30000}
-    }
-    for loc, data in locations_data.items():
-        G.add_node(loc, pos=data['pos'], waktu_layanan=data['waktu_layanan'], biaya=data['biaya'])
-    edges = [
-        ('Alun-Alun Bandung', 'Jalan Braga', 3), ('Alun-Alun Bandung', 'Stasiun Bandung', 6),
-        ('Alun-Alun Bandung', 'Gedung Sate', 9), ('Jalan Braga', 'Gedung Sate', 4),
-        ('Jalan Braga', 'Stasiun Bandung', 5), ('Jalan Braga', 'Trans Studio Bandung', 11),
-        ('Stasiun Bandung', 'Gedung Sate', 8), ('Gedung Sate', 'Monumen Perjuangan', 6),
-        ('Gedung Sate', 'Saung Angklung Udjo', 10), ('Gedung Sate', 'Trans Studio Bandung', 11),
-        ('Monumen Perjuangan', 'Saung Angklung Udjo', 12), ('Saung Angklung Udjo', 'Trans Studio Bandung', 13),
-        ('Monumen Perjuangan', 'Kebun Binatang Bandung', 5), ('Kebun Binatang Bandung', 'Hutan Babakan Siliwangi', 2),
-        ('Hutan Babakan Siliwangi', 'Teras Cikapundung', 1), ('Teras Cikapundung', 'Cihampelas Walk', 3),
-        ('Kebun Binatang Bandung', 'Cihampelas Walk', 6), ('Teras Cikapundung', 'Museum Srihadi Soedarsono', 4),
-        ('Museum Srihadi Soedarsono', 'Pipinos Bakery', 3), ('Pipinos Bakery', 'Kurokoffe', 2),
-        ('Kurokoffe', 'Jonn & Sons', 2), ('Jonn & Sons', 'Warung Sate Bu Ngantuk', 3),
-        ('Warung Sate Bu Ngantuk', 'Punclut', 9), ('Cihampelas Walk', 'Dago Pakar', 16),
-        ('Museum Srihadi Soedarsono', 'Dago Pakar', 15), ('Dago Pakar', 'Punclut', 13),
-        ('Punclut', 'Sarae Hills', 2), ('Sarae Hills', 'Villa Niis', 7),
-        ('Villa Niis', 'Ramen Bajuri', 8), ('Ramen Bajuri', 'Floating Market', 5),
-        ('Floating Market', 'Farmhouse', 8), ('Farmhouse', 'De Ranch', 9),
-        ('Punclut', 'De Ranch', 12),
-    ]
-    for u, v, w in edges: G.add_edge(u, v, weight=w)
-    locations_pos = {loc: data['pos'] for loc, data in locations_data.items()}
-    return G, locations_pos
 
-def dijkstra(graph, start, end):
-    if start not in graph or end not in graph: return float('inf')
-    distances = {node: float('inf') for node in graph.nodes()}
-    distances[start] = 0
-    pq = [(0, start)]
-    while pq:
-        dist, current = heapq.heappop(pq)
-        if current == end: break
-        if dist > distances[current]: continue
-        for neighbor in graph.neighbors(current):
-            weight = graph[current][neighbor].get('weight', 1) 
-            distance = dist + weight
-            if distance < distances[neighbor]:
-                distances[neighbor] = distance
-                heapq.heappush(pq, (distance, neighbor))
-    return distances[end]
-
-def find_progressive_enriched_path(graph, start, end, available_nodes, 
-                                   current_time_spent, current_cost_spent, 
-                                   TIME_BUDGET, MONEY_BUDGET):
-    path, current = [start], start
-    remaining_nodes = set(available_nodes)
-    alpha, beta = 0.7, 0.3 
-    segment_time = 0.0
-    segment_cost = 0.0
-    service_time_at_segment_end = graph.nodes[end].get('waktu_layanan', 0)
-    while current != end:
-        competitors = remaining_nodes | {end}
-        best_next_stop, best_score = None, float('inf')
-        for competitor in competitors:
-            dist_curr_comp = dijkstra(graph, current, competitor)
-            dist_comp_end = dijkstra(graph, competitor, end)
-            service_time_at_competitor = graph.nodes[competitor].get('waktu_layanan', 0)
-            price = graph.nodes[competitor].get('biaya', 0)
-            time_if_chosen = current_time_spent + segment_time + dist_curr_comp + service_time_at_competitor
-            cost_if_chosen = current_cost_spent + segment_cost + price
-            total_estimated_time = time_if_chosen + dist_comp_end
-            if competitor != end:
-                total_estimated_time += service_time_at_segment_end
-            if total_estimated_time > TIME_BUDGET or cost_if_chosen > MONEY_BUDGET:
-                continue 
-            score = (alpha * dist_curr_comp) + (beta * dist_comp_end)
-            if score < best_score:
-                best_score, best_next_stop = score, competitor
-
-        if best_next_stop is None:
-            print(f"      -> ❌ PERINGATAN: Tidak ada rute layak ditemukan ke '{end}' dalam anggaran.")
-            return [start], 0.0, 0.0 
-
-        path.append(best_next_stop)
-        travel_time_to_stop = dijkstra(graph, current, best_next_stop)
-        segment_time += travel_time_to_stop
-        current = best_next_stop
-        segment_time += graph.nodes[current].get('waktu_layanan', 0)
-        segment_cost += graph.nodes[current].get('biaya', 0)
-        if current != end:
-            if current in remaining_nodes:
-                remaining_nodes.remove(current)
-        else:
-            break 
-    return path, segment_time, segment_cost
-
-def final_tour_algorithm(graph, start, must_visit, end, TIME_BUDGET, MONEY_BUDGET):
-    """
-    [PENTING] Fungsi ini sekarang akan di-run di thread terpisah.
-    Semua 'print()' akan ditangkap dan dialihkan ke GUI.
-    """
-    all_nodes_set, unvisited_must_visit = set(graph.nodes()), set(must_visit)
-    final_tour, current_pos = [start], start
-    total_time = graph.nodes[start].get('waktu_layanan', 0)
-    total_cost = graph.nodes[start].get('biaya', 0)
-
-    print("\n" + "="*60 + "\nALGORITMA TUR KULINER (BUDGET-AWARE)\n" + "="*60)
-    print(f"Anggaran Waktu: {TIME_BUDGET} menit ({TIME_BUDGET/60:.1f} jam)")
-    print(f"Anggaran Biaya: Rp {MONEY_BUDGET:,.0f}")
-    print(f"Status Awal: Waktu={total_time} menit, Biaya=Rp {total_cost:,.0f}")
-    print(f"Titik Awal: {start}")
-    print(f"Tujuan Akhir: {end}")
-    print(f"Wajib Kunjung: {', '.join(must_visit) if must_visit else 'Tidak ada'}")
-    print("="*60)
-
-    # 1. Selesaikan semua lokasi WAJIB KUNJUNG
-    while unvisited_must_visit:
-        next_destination = min(unvisited_must_visit, key=lambda dest: dijkstra(graph, current_pos, dest))
-        print(f"\nRencana segmen: dari '{current_pos}' menuju '{next_destination}' (Wajib)")
-        
-        travel_time_to_dest = dijkstra(graph, current_pos, next_destination)
-        service_time_dest = graph.nodes[next_destination].get('waktu_layanan', 0)
-        price_dest = graph.nodes[next_destination].get('biaya', 0)
-
-        if (total_time + travel_time_to_dest + service_time_dest > TIME_BUDGET) or \
-           (total_cost + price_dest > MONEY_BUDGET):
-            print(f"  -> ❌ PERINGATAN: Lokasi wajib '{next_destination}' tidak dapat dikunjungi.")
-            print(f"     Estimasi Waktu: {total_time + travel_time_to_dest + service_time_dest} menit (Budget: {TIME_BUDGET})")
-            print(f"     Estimasi Biaya: Rp {total_cost + price_dest:,.0f} (Budget: Rp {MONEY_BUDGET:,.0f})")
-            unvisited_must_visit.remove(next_destination)
-            continue 
-
-        nodes_to_consider = all_nodes_set - set(final_tour) - unvisited_must_visit
-        segment, seg_time, seg_cost = find_progressive_enriched_path(
-            graph, current_pos, next_destination, nodes_to_consider,
-            total_time, total_cost, TIME_BUDGET, MONEY_BUDGET
-        )
-        
-        if len(segment) > 1:
-            final_tour.extend(segment[1:])
-            total_time += seg_time
-            total_cost += seg_cost
-            print(f"  -> Rute Ditemukan: {' → '.join(segment[1:])}")
-            print(f"     Waktu Segmen: {int(seg_time)} menit, Biaya Segmen: Rp {seg_cost:,.0f}")
-            print(f"     Status Anggaran: Waktu={int(total_time)} menit, Biaya=Rp {total_cost:,.0f}")
-        
-        current_pos = next_destination
-        unvisited_must_visit.remove(next_destination)
-
-    # 2. Pergi ke TUJUAN AKHIR
-    print(f"\nRencana segmen: dari '{current_pos}' menuju tujuan akhir '{end}'")
-    nodes_to_consider = all_nodes_set - set(final_tour)
-    segment, seg_time, seg_cost = find_progressive_enriched_path(
-        graph, current_pos, end, nodes_to_consider,
-        total_time, total_cost, TIME_BUDGET, MONEY_BUDGET
-    )
-    
-    if len(segment) > 1:
-        final_tour.extend(segment[1:])
-        total_time += seg_time
-        total_cost += seg_cost
-        print(f"  -> Rute Ditemukan: {' → '.join(segment[1:])}")
-        print(f"     Waktu Segmen: {int(seg_time)} menit, Biaya Segmen: Rp {seg_cost:,.0f}")
-
-    unique_tour = []
-    for loc in final_tour:
-        if not unique_tour or unique_tour[-1] != loc:
-            unique_tour.append(loc)
-            
-    print("\n" + "="*60 + "\nHASIL RUTE TUR FINAL\n" + "="*60)
-    print(f"Rute Lengkap: {' → '.join(unique_tour)}")
-    print(f"Total Waktu Aktual: {int(total_time)} menit ({total_time/60:.1f} jam)")
-    print(f"Total Biaya Aktual: Rp {total_cost:,.0f}")
-    print(f"\nSisa Anggaran Waktu: {int(TIME_BUDGET - total_time)} menit")
-    print(f"Sisa Anggaran Biaya: Rp {MONEY_BUDGET - total_cost:,.0f}")
-    print("="*60)
-    
-    return unique_tour, total_time, total_cost
-
-# --- [PERUBAHAN BESAR] FUNGSI VISUALISASI ---
-def visualize_tour(graph, locations_pos, tour, start_point, end_point, total_time_spent, total_cost_spent, ax):
-    """
-    [GUI REFACTOR]
-    Fungsi ini tidak lagi memanggil `plt.show()` atau `plt.figure()`.
-    Ia menerima 'ax' (sebuah Matplotlib Axes object) dan menggambar di atasnya.
-    """
-    ax.clear() # Hapus gambar sebelumnya
-    pos = locations_pos
-    
-    title = (
-        f"Rute Tur Kuliner dari {start_point} ke {end_point}\n"
-        f"Total Waktu: {int(total_time_spent)} menit ({total_time_spent/60:.1f} jam) | "
-        f"Total Biaya: Rp {total_cost_spent:,.0f}"
-    )
-    ax.set_title(title, fontsize=12, fontweight='bold', pad=20)
-
-    # Gambar semua node dan edge (latar belakang)
-    nx.draw_networkx_nodes(graph, pos, node_color='lightgray', node_size=800, ax=ax)
-    nx.draw_networkx_labels(graph, pos, font_size=7, font_weight='bold', ax=ax)
-    nx.draw_networkx_edges(graph, pos, width=1, alpha=0.3, ax=ax)
-
-    # Sorot node yang dikunjungi
-    tour_nodes = set(tour)
-    node_colors = {node: ('#FFD700' if node in tour_nodes else 'lightgray') for node in graph.nodes()} # Gold
-    node_colors[start_point], node_colors[end_point] = '#90EE90', '#F08080' # LightGreen, LightCoral
-    nx.draw_networkx_nodes(graph, pos, node_color=list(node_colors.values()), node_size=1000, ax=ax)
-
-    # Gambar edge rute tur
-    tour_edges = [(tour[i], tour[i+1]) for i in range(len(tour)-1)]
-    nx.draw_networkx_edges(graph, pos, edgelist=tour_edges,
-                          width=2.5, edge_color='#FF6347', arrows=True, arrowsize=20, ax=ax) # Tomato Red
-    
-    edge_labels = nx.get_edge_attributes(graph, 'weight')
-    nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels, font_size=8, label_pos=0.5, font_color='black', ax=ax)
-
-    # Tambahkan label urutan
-    for i, node in enumerate(tour):
-        x, y = pos[node]
-        ax.text(x, y + 0.18, f'#{i+1}', fontsize=10, fontweight='bold', color='darkred', ha='center',
-                bbox=dict(boxstyle='circle,pad=0.2', facecolor='white', alpha=0.7))
-
-    legend_elements = [ plt.Line2D([0], [0], marker='o', color='w', label=f'Start ({start_point})', markerfacecolor='#90EE90', ms=15),
-                        plt.Line2D([0], [0], marker='o', color='w', label=f'End ({end_point})', markerfacecolor='#F08080', ms=15),
-                        plt.Line2D([0], [0], marker='o', color='w', label='Dikunjungi', markerfacecolor='#FFD700', ms=15),
-                        plt.Line2D([0], [0], marker='o', color='w', label='Tidak Dikunjungi', markerfacecolor='lightgray', ms=15),
-                        plt.Line2D([0], [0], color='#FF6347', lw=3, label='Rute Tur (Perjalanan)') ]
-    ax.legend(handles=legend_elements, loc='best', fontsize=10)
-    
-    # Tidak ada plt.show() atau plt.savefig() di sini
-    # Canvas akan di-draw ulang oleh main GUI
-    
 # ==============================================================================
 # TAHAP 2: KELAS-KELAS HELPER UNTUK GUI (THREADING & LOGGING)
+# (Tidak ada perubahan di Stream, perubahan kecil di AlgorithmWorker)
 # ==============================================================================
 
 class Stream(QObject):
@@ -324,16 +75,33 @@ class AlgorithmWorker(QObject):
         try:
             self.progress.emit(10) # Menandakan proses dimulai
             
-            # Panggil fungsi algoritma inti Anda
-            result = final_tour_algorithm(
+            # [REFAKTOR] Memanggil fungsi backend yang diimpor
+            # Fungsi ini mengembalikan 4 nilai: (tour, time, cost, log_messages)
+            result_tuple = backend.final_tour_algorithm(
                 self.graph, self.start, self.must_visit, self.end,
                 self.time_budget, self.money_budget
             )
             
+            self.progress.emit(90) # Selesai algoritma, proses log
+
+            if result_tuple:
+                # [REFAKTOR] Ambil log_messages dan 'print' ke GUI
+                log_messages = result_tuple[3]
+                for msg in log_messages:
+                    print(msg) # Ini akan ditangkap oleh 'Stream'
+                
+                # [REFAKTOR] Kirim hanya data plot (tour, time, cost) ke sinyal 'finished'
+                plot_data = result_tuple[:3]
+                self.finished.emit(plot_data)
+            else:
+                raise Exception("Algoritma tidak mengembalikan hasil.")
+
             self.progress.emit(100) # Selesai
-            self.finished.emit(result) # Kirim hasil
+            
         except Exception as e:
             print(f"\n❌ TERJADI ERROR PADA ALGORITMA:\n{e}")
+            import traceback
+            print(traceback.format_exc()) # Cetak traceback untuk debug
             self.progress.emit(0)
             self.finished.emit(None) # Kirim None jika gagal
 
@@ -363,12 +131,18 @@ class TourApp(QMainWindow):
         """
         Memuat data graf saat aplikasi dimulai.
         """
-        self.G, self.locations_pos = create_bandung_culinary_graph()
-        self.location_list = sorted(list(self.locations_pos.keys()))
+        # [REFAKTOR] Memanggil fungsi backend yang diimpor
+        self.G = backend.create_bandung_culinary_graph()
+        
+        # [REFAKTOR] Ekstrak 'pos' dari node graf, karena fungsi backend baru
+        # tidak mengembalikannya secara terpisah.
+        self.locations_pos = nx.get_node_attributes(self.G, 'pos')
+        self.location_list = sorted(list(self.G.nodes()))
 
     def init_ui(self):
         """
         Membangun semua komponen User Interface.
+        (Tidak ada perubahan di sini)
         """
         self.setWindowTitle("🗺️ Sistem Rekomendasi Tur Kuliner Bandung (Budget-Aware)")
         self.setGeometry(100, 100, 1600, 900)
@@ -376,7 +150,6 @@ class TourApp(QMainWindow):
         main_widget = QWidget()
         self.setCentralWidget(main_widget)
         
-        # Layout utama (Kiri: Kontrol, Kanan: Output)
         main_layout = QHBoxLayout(main_widget)
 
         # --- Panel Kiri (Kontrol) ---
@@ -394,7 +167,7 @@ class TourApp(QMainWindow):
         self.time_budget_input.setSuffix(" Jam")
         self.money_budget_input = QSpinBox()
         self.money_budget_input.setRange(0, 10000000)
-        self.money_budget_input.setValue(300000)
+        self.money_budget_input.setValue(500000) # [EDIT] Budget default dinaikkan
         self.money_budget_input.setSingleStep(50000)
         self.money_budget_input.setPrefix("Rp ")
         budget_layout.addWidget(QLabel("Waktu:"), 0, 0)
@@ -476,22 +249,20 @@ class TourApp(QMainWindow):
         right_layout.addWidget(plot_group)
         right_layout.addWidget(log_group)
         
-        # Set layout pembagian (80% plot, 20% log)
         right_layout.setStretchFactor(plot_group, 4)
         right_layout.setStretchFactor(log_group, 1)
 
-        # Gabungkan panel kiri dan kanan
         main_layout.addWidget(left_panel)
         main_layout.addWidget(right_panel)
         main_layout.setStretchFactor(left_panel, 1)
         main_layout.setStretchFactor(right_panel, 3)
         
-        # Terapkan styling
         self.set_stylesheet()
 
     def set_stylesheet(self):
         """
         Menerapkan QSS (Qt Style Sheet) untuk tema 'eyes-friendly' (dark).
+        (Tidak ada perubahan di sini)
         """
         self.setStyleSheet("""
             QMainWindow, QWidget {
@@ -561,7 +332,6 @@ class TourApp(QMainWindow):
                 background-color: #007ACC;
                 border-radius: 5px;
             }
-            /* Styling untuk Matplotlib Toolbar */
             #qt_toolbar_navigation {
                 background-color: #3C3C3C;
             }
@@ -575,19 +345,19 @@ class TourApp(QMainWindow):
         self.end_combo.addItems(self.location_list)
         self.must_visit_list.addItems(self.location_list)
         
-        # Set default yang berbeda
+        # [EDIT] Set default baru berdasarkan data graf yang baru
         self.start_combo.setCurrentText("Stasiun Bandung")
-        self.end_combo.setCurrentText("De Ranch")
+        self.end_combo.setCurrentText("Harmony Dimsum")
 
     def connect_signals(self):
         """
         Menghubungkan sinyal (cth: klik tombol) ke slot (fungsi).
+        (Tidak ada perubahan di sini)
         """
         self.run_button.clicked.connect(self.start_algorithm)
         self.save_preset_button.clicked.connect(self.save_preset)
         self.load_preset_button.clicked.connect(self.load_preset)
         
-        # Sinyal untuk update Info Panel
         self.start_combo.currentTextChanged.connect(self.update_info_panel)
         self.end_combo.currentTextChanged.connect(self.update_info_panel)
         self.must_visit_list.itemClicked.connect(
@@ -600,6 +370,7 @@ class TourApp(QMainWindow):
     def update_log(self, text):
         """
         Menambahkan teks dari 'print' ke log output.
+        (Tidak ada perubahan di sini)
         """
         self.log_output.moveCursor(self.log_output.textCursor().MoveOperation.End)
         self.log_output.insertPlainText(text)
@@ -608,6 +379,7 @@ class TourApp(QMainWindow):
     def update_info_panel(self, location_name):
         """
         Menampilkan detail lokasi di Info Panel.
+        (Tidak ada perubahan di sini)
         """
         if not location_name or location_name not in self.G.nodes:
             self.info_display.clear()
@@ -631,15 +403,14 @@ class TourApp(QMainWindow):
     def start_algorithm(self):
         """
         Mempersiapkan dan memulai thread algoritma.
+        (Tidak ada perubahan di sini, worker yang akan memanggil 'backend')
         """
-        # 1. Ambil semua input dari GUI
         start = self.start_combo.currentText()
         end = self.end_combo.currentText()
         time_budget = self.time_budget_input.value() * 60  # Konversi jam ke menit
         money_budget = self.money_budget_input.value()
         must_visit = [item.text() for item in self.must_visit_list.selectedItems()]
 
-        # 2. Validasi
         if start == end:
             QMessageBox.warning(self, "Input Tidak Valid", "Titik Awal dan Tujuan Akhir tidak boleh sama.")
             return
@@ -648,34 +419,28 @@ class TourApp(QMainWindow):
         if end in must_visit:
             must_visit.remove(end)
 
-        # 3. Persiapan GUI untuk proses
         self.run_button.setDisabled(True)
         self.run_button.setText("Menjalankan Algoritma...")
         self.log_output.clear()
         self.progress_bar.setValue(0)
         
-        # 4. Hapus gambar sebelumnya
         self.figure.clear()
         self.canvas.draw()
 
-        # 5. Siapkan Thread dan Worker
         self.thread = QThread()
         self.worker = AlgorithmWorker(
             self.G, start, must_visit, end, time_budget, money_budget
         )
         self.worker.moveToThread(self.thread)
 
-        # 6. Hubungkan sinyal dari worker ke GUI
         self.thread.started.connect(self.worker.run)
         self.worker.finished.connect(self.on_algorithm_finished)
         self.worker.progress.connect(self.progress_bar.setValue)
         
-        # 7. Cleanup thread setelah selesai
         self.worker.finished.connect(self.thread.quit)
         self.worker.finished.connect(self.worker.deleteLater)
         self.thread.finished.connect(self.thread.deleteLater)
 
-        # 8. Mulai!
         self.thread.start()
 
     @pyqtSlot(object)
@@ -691,6 +456,8 @@ class TourApp(QMainWindow):
             self.progress_bar.setValue(0)
             return
 
+        # [REFAKTOR] 'result' sekarang adalah 3-tuple (tour, time, cost)
+        # yang dikirim oleh worker.
         optimal_tour, final_time, final_cost = result
         
         if not optimal_tour or len(optimal_tour) <= 1:
@@ -700,10 +467,12 @@ class TourApp(QMainWindow):
 
         print("\n-> Menggambar visualisasi rute...")
         try:
-            # Gambar di canvas yang ada
             ax = self.figure.subplots()
-            visualize_tour(
-                self.G, self.locations_pos,
+            
+            # [REFAKTOR] Memanggil fungsi 'visualize_tour' dari backend
+            # dan menghapus argumen 'locations_pos' yang tidak lagi diperlukan.
+            backend.visualize_tour(
+                self.G,
                 optimal_tour,
                 self.start_combo.currentText(), self.end_combo.currentText(),
                 final_time, final_cost,
@@ -719,6 +488,7 @@ class TourApp(QMainWindow):
     def save_preset(self):
         """
         Menyimpan konfigurasi saat ini ke file JSON.
+        (Tidak ada perubahan di sini)
         """
         preset_data = {
             "time_budget": self.time_budget_input.value(),
@@ -744,6 +514,7 @@ class TourApp(QMainWindow):
     def load_preset(self):
         """
         Memuat konfigurasi dari file JSON.
+        (Tidak ada perubahan di sini)
         """
         filePath, _ = QFileDialog.getOpenFileName(
             self, "Muat Preset", "", "JSON Files (*.json)"
@@ -754,13 +525,11 @@ class TourApp(QMainWindow):
                 with open(filePath, 'r') as f:
                     preset_data = json.load(f)
                 
-                # Terapkan data ke GUI
                 self.time_budget_input.setValue(preset_data.get("time_budget", 8.0))
                 self.money_budget_input.setValue(preset_data.get("money_budget", 300000))
                 self.start_combo.setCurrentText(preset_data.get("start_point", ""))
                 self.end_combo.setCurrentText(preset_data.get("end_point", ""))
                 
-                # Reset pilihan list
                 self.must_visit_list.clearSelection()
                 must_visit_items = preset_data.get("must_visit", [])
                 for i in range(self.must_visit_list.count()):
@@ -775,6 +544,7 @@ class TourApp(QMainWindow):
     def closeEvent(self, event):
         """
         Memastikan stdout dikembalikan saat aplikasi ditutup.
+        (Tidak ada perubahan di sini)
         """
         sys.stdout = sys.__stdout__  # Kembalikan stdout asli
         super().closeEvent(event)
