@@ -240,22 +240,57 @@ def final_tour_algorithm(graph, start, must_visit, end, TIME_BUDGET, MONEY_BUDGE
                 if not unique_tour or unique_tour[-1] != loc: unique_tour.append(loc)
             return unique_tour, total_time, total_cost, log_messages
 
-
-        final_tour.extend(segment[1:])
-
+        
         # ================================================================ #
-        #          LOGIKA PENAMBAHAN BIAYA YANG BENAR (VERSI INI)          #
+        #         LOGIKA PENAMBAHAN BIAYA DAN LOGGING DETAIL               #
         # ================================================================ #
-        # Karena find_progressive sudah MENGHITUNG BIAYA/WAKTU 'next_destination',
-        # kita HANYA perlu menambahkan total dari segmen tersebut.
+        
+        log_messages.append(f"-> Rute Ditemukan: {' → '.join(segment[1:])}")
+        
+        # Simpan state *sebelum* segmen ini ditambahkan, untuk logging
+        # Gunakan variabel sementara agar tidak mengganggu 'total_time' asli
+        running_log_time = total_time
+        running_log_cost = total_cost
+
+        # Update total *algoritma* (sesuai logika asli)
         total_time += seg_time
         total_cost += seg_cost
+        
+        # Tambahkan segmen ke tur
+        final_tour.extend(segment[1:])
+
+        # Sekarang, iterasi segmen HANYA UNTUK LOGGING DETAIL
+        # segment[0] adalah node awal segmen (current_pos)
+        previous_node_in_segment = segment[0]
+        
+        for i in range(1, len(segment)):
+            current_node_in_segment = segment[i]
+            
+            # 1. Hitung biaya perjalanan (Dijkstra)
+            travel_time = dijkstra(graph, previous_node_in_segment, current_node_in_segment)
+            
+            # 2. Ambil biaya layanan & harga di node *ini*
+            service_time = graph.nodes[current_node_in_segment].get('waktu_layanan', 0)
+            service_cost = graph.nodes[current_node_in_segment].get('biaya', 0)
+            
+            # 3. Update state logging *sementara*
+            running_log_time += travel_time + service_time
+            running_log_cost += service_cost
+            
+            # 4. Buat pesan log
+            log_messages.append(f"   ...Menuju: <font color='yellow'>{current_node_in_segment}</font>")
+            log_messages.append(f"      - Perjalanan: {int(travel_time)} menit")
+            log_messages.append(f"      - Layanan: {int(service_time)} menit, Biaya: Rp {service_cost:,.0f}")
+            log_messages.append(f"      - Sisa Anggaran: Waktu=<font color='lightblue'>{int(TIME_BUDGET - running_log_time)}</font> mnt, Biaya=<font color='lightgreen'>Rp {MONEY_BUDGET - running_log_cost:,.0f}</font>")
+            
+            previous_node_in_segment = current_node_in_segment
+
+        # Log status akhir segmen (yang harus cocok dengan 'total_time' asli)
+        log_messages.append(f"   <b>Status Anggaran (Akhir Segmen): Waktu={int(total_time)} menit, Biaya=Rp {total_cost:,.0f}</b>")
         # ================================================================ #
 
-        log_messages.append(f"-> Rute Ditemukan: {' → '.join(segment[1:])}")
-        log_messages.append(f"   Status Anggaran: Waktu={int(total_time)} menit, Biaya=Rp {total_cost:,.0f}")
-
         current_pos = next_destination
+
 
     log_messages.append(f"\nMerencanakan segmen akhir: '{current_pos}' -> '{end}'")
 
@@ -280,11 +315,50 @@ def final_tour_algorithm(graph, start, must_visit, end, TIME_BUDGET, MONEY_BUDGE
         )
 
     if status == "Sukses" and len(segment) > 1:
-        final_tour.extend(segment[1:])
-        # Tambahkan biaya/waktu dari segmen terakhir
+        # ================================================================ #
+        #         LOGIKA PENAMBAHAN BIAYA DAN LOGGING DETAIL (SEGMEN AKHIR) #
+        # ================================================================ #
+        
+        log_messages.append(f"-> Rute Ditemukan: {' → '.join(segment[1:])}")
+        
+        # Simpan state *sebelum* segmen ini ditambahkan, untuk logging
+        running_log_time = total_time
+        running_log_cost = total_cost
+
+        # Update total *algoritma* (sesuai logika asli)
         total_time += seg_time
         total_cost += seg_cost
-        log_messages.append(f"-> Rute Ditemukan: {' → '.join(segment[1:])}")
+        
+        # Tambahkan segmen ke tur
+        final_tour.extend(segment[1:])
+
+        # Sekarang, iterasi segmen HANYA UNTUK LOGGING DETAIL
+        previous_node_in_segment = segment[0]
+        
+        for i in range(1, len(segment)):
+            current_node_in_segment = segment[i]
+            
+            # 1. Hitung biaya perjalanan (Dijkstra)
+            travel_time = dijkstra(graph, previous_node_in_segment, current_node_in_segment)
+            
+            # 2. Ambil biaya layanan & harga di node *ini*
+            service_time = graph.nodes[current_node_in_segment].get('waktu_layanan', 0)
+            service_cost = graph.nodes[current_node_in_segment].get('biaya', 0)
+            
+            # 3. Update state logging *sementara*
+            running_log_time += travel_time + service_time
+            running_log_cost += service_cost
+            
+            # 4. Buat pesan log
+            log_messages.append(f"   ...Menuju: <font color='yellow'>{current_node_in_segment}</font>")
+            log_messages.append(f"      - Perjalanan: {int(travel_time)} menit")
+            log_messages.append(f"      - Layanan: {int(service_time)} menit, Biaya: Rp {service_cost:,.0f}")
+            log_messages.append(f"      - Sisa Anggaran: Waktu=<font color='lightblue'>{int(TIME_BUDGET - running_log_time)}</font> mnt, Biaya=<font color='lightgreen'>Rp {MONEY_BUDGET - running_log_cost:,.0f}</font>")
+            
+            previous_node_in_segment = current_node_in_segment
+        
+        # ================================================================ #
+    
     elif status != "Sukses":
          log_messages.append(f"-> ❌ GAGAL: {status}")
 
