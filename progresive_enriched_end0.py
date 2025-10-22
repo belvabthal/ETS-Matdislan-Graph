@@ -16,8 +16,7 @@ def create_bandung_culinary_graph():
     locations_data = {
         # Format: 'Nama Lokasi': {'pos': (x, y), 'waktu_layanan': menit, 'biaya': IDR}
         # Area Pusat Kota & Selatan
-        'Stasiun Bandung': {'pos': (360, 509), 'waktu_layanan': 0, 'biaya': 0},
-        'Waroeng Lokal': {'pos': (365, 600), 'waktu_layanan': 20, 'biaya': 85000},
+        'Waroeng Lokal': {'pos': (360, 509), 'waktu_layanan': 0, 'biaya': 0},
         'Dimsum Sembilan Ayam': {'pos': (345, 740), 'waktu_layanan': 10, 'biaya': 45000},
         'Toko Roti Sidodadi': {'pos': (408, 485), 'waktu_layanan': 5, 'biaya': 100000},
         'Sudirman Street Bandung': {'pos': (415, 380), 'waktu_layanan': 15, 'biaya': 50000},

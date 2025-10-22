@@ -1,102 +1,102 @@
 import networkx as nx
 import numpy as np
-import matplotlib.pyplot as plt
+import sys
 
-def create_culinary_graph():
+# --- TAHAP 1: Impor Model Graf ---
+# Kita mengimpor fungsi pembuat graf dari file utama Anda.
+# [RALAT] Nama file dipastikan 'progresive_enriched_end0.py'
+try:
+    from progresive_enriched_end0 import create_bandung_culinary_graph
+except ImportError:
+    print("="*60)
+    print("ERROR: GAGAL MENGIMPOR")
+    print("Pastikan file ini ('tampilkan_model_final.py')")
+    print("berada di folder yang sama dengan 'progresive_enriched_end0.py'")
+    print("="*60)
+    sys.exit()
+
+def tampilkan_representasi_formal(graph):
     """
-    Membangun model Graf G = (V, E) untuk studi kasus kuliner Bandung.
-    - Atribut Simpul (V): nama, waktu_layanan, estimasi_biaya
-    - Bobot Sisi (E): waktu_tempuh
+    Fungsi ini mengambil objek graf NetworkX dan mencetak
+    dua representasi formalnya: Adjacency List dan Adjacency Matrix.
+    Ini adalah inti dari 'Pemodelan dan Analisis Awal'.
     """
-    G = nx.Graph()
 
-    # 1. Definisikan Atribut Simpul (Node Attributes)
-    # (id, {dict_of_attributes})
-    nodes_data = [
-        (0, {'nama': 'Stasiun Bandung', 'waktu_layanan': 0, 'biaya': 0}),
-        (1, {'nama': 'Sudirman Street', 'waktu_layanan': 75, 'biaya': 70000}),
-        (2, {'nama': 'Kopi Purnama', 'waktu_layanan': 45, 'biaya': 45000}),
-        (3, {'nama': 'Iga Bakar Si Jangkung', 'waktu_layanan': 60, 'biaya': 80000}),
-        (4, {'nama': 'Seblak Sultan', 'waktu_layanan': 45, 'biaya': 30000}),
-        (5, {'nama': 'Kue Balok Cihampelas', 'waktu_layanan': 20, 'biaya': 25000}),
-        (6, {'nama': 'Hotel Cihampelas', 'waktu_layanan': 0, 'biaya': 0})
-    ]
-    G.add_nodes_from(nodes_data)
+    print("======================================================")
+    print("      PEMODELAN & ANALISIS AWAL GRAF KULINER")
+    print("        (Data: progresive_enriched_end0.py)")
+    print("======================================================")
+    
+    # Mendefinisikan urutan simpul yang konsisten
+    # Ini akan mencakup simpul dari 'locations_data' DAN 'Stasiun Bandung'
+    node_list = list(graph.nodes())
 
-    # 2. Definisikan Sisi Berbobot (Weighted Edges)
-    # (u, v, {weight_attribute: value})
-    # Kita sebut bobotnya 'waktu_tempuh' agar jelas
-    edges_data = [
-        (0, 1, {'waktu_tempuh': 12}),
-        (0, 2, {'waktu_tempuh': 15}),
-        (0, 3, {'waktu_tempuh': 18}),
-        (1, 2, {'waktu_tempuh': 10}),
-        (2, 3, {'waktu_tempuh': 10}),
-        (2, 4, {'waktu_tempuh': 20}),
-        (3, 4, {'waktu_tempuh': 15}),
-        (3, 5, {'waktu_tempuh': 10}),
-        (4, 6, {'waktu_tempuh': 5}),
-        (5, 6, {'waktu_tempuh': 3})
-    ]
-    G.add_edges_from(edges_data)
+    # --- 1. Adjacency List (Konektivitas Dasar) ---
+    print("\n[ Tahap 1: Adjacency List (Konektivitas Dasar) ]\n")
+    print("Ini memodelkan 'Simpul mana terhubung ke mana?'")
     
-    return G
+    for i, node_name in enumerate(node_list):
+        # Mengambil daftar tetangga (neighbors) untuk setiap simpul
+        neighbors = list(graph.neighbors(node_name))
+        
+        # Format nama simpul agar rapi
+        nama_simpul_terpotong = (node_name[:28] + '..') if len(node_name) > 28 else node_name
+        
+        print(f"Simpul [{i:02d}] ({nama_simpul_terpotong}):")
+        
+        # Cetak tetangganya dengan rapi
+        if neighbors:
+            for neighbor in neighbors:
+                print(f"          -> {neighbor}")
+        else:
+            print("          (Tidak ada koneksi)")
+        print("-" * 35) # Pemisah antar simpul
 
-def print_graph_representations(graph):
-    """
-    Mencetak Adjacency List dan Adjacency Matrix
-    Mirip dengan fungsi di Task03_Timproyek.py
-    """
-    print("--- (Tahap 2) Representasi Graf Formal ---")
-    
-    # 1. Adjacency List (Basic)
-    print("\n[ Adjacency List (Konektivitas Dasar) ]")
-    adj_list = nx.to_dict_of_lists(graph)
-    node_names = nx.get_node_attributes(graph, 'nama')
-    
-    for node, neighbors in adj_list.items():
-        nama_simpul = node_names[node]
-        nama_tetangga = [node_names[n] for n in neighbors]
-        print(f'Simpul [{node}] ({nama_simpul}): {nama_tetangga}')
+    # --- 2. Adjacency Matrix (Bobot = Waktu Tempuh) ---
+    print("\n[ Tahap 2: Adjacency Matrix (Bobot = Waktu Tempuh) ]\n")
+    print("Ini memodelkan 'Berapa lama perjalanan antar simpul?'")
+    print("Nilai M[i][j] = waktu tempuh dari simpul i ke simpul j.")
+    print("Nilai 0 berarti tidak ada koneksi *langsung*.\n")
 
-    # 2. Adjacency Matrix (Berbobot)
-    print("\n[ Adjacency Matrix (Bobot = Waktu Tempuh) ]")
-    nodes = sorted(graph.nodes())
-    # Kita gunakan 'waktu_tempuh' sebagai 'weight' untuk matriks
-    adj_matrix = nx.to_numpy_array(graph, nodelist=nodes, weight='waktu_tempuh', dtype=int)
-    
-    print("Urutan Simpul:", nodes)
-    print(adj_matrix)
+    # Membuat Adjacency Matrix menggunakan NumPy
+    # 'nodelist' memastikan urutan baris/kolom matriks sama dengan daftar di atas
+    # 'weight='weight'' memberi tahu networkx untuk mengisi matriks dengan atribut 'weight' (waktu tempuh)
+    # 'dtype=int' membuat angkanya rapi (integer)
+    adj_matrix = nx.to_numpy_array(graph, nodelist=node_list, weight='weight', dtype=int)
 
-def visualize_culinary_graph(graph):
-    """
-    Visualisasi dasar dari graf kuliner
-    """
-    plt.figure(figsize=(12, 9))
+    # Mencetak daftar urutan simpul untuk referensi matriks
+    print("--- Urutan Simpul (Indeks Matriks) ---")
+    for i, node_name in enumerate(node_list):
+        print(f"[{i:02d}] = {node_name}")
+    print("--- (Akhir Urutan Simpul) ---\n")
+
+    # Mencetak matriksnya
+    print("--- Adjacency Matrix (M) ---")
+    # Mengatur opsi cetak NumPy agar seluruh matriks ditampilkan (tidak terpotong)
+    # 'suppress=True' membuat cetakan angka lebih rapi
+    np.set_printoptions(threshold=np.inf, linewidth=np.inf, suppress=True)
     
-    # Ambil atribut untuk label
-    pos = nx.spring_layout(graph, seed=42)
-    node_labels = nx.get_node_attributes(graph, 'nama')
-    edge_labels = nx.get_edge_attributes(graph, 'waktu_tempuh')
-    
-    nx.draw_networkx_nodes(graph, pos, node_color='skyblue', node_size=2500)
-    nx.draw_networkx_labels(graph, pos, labels=node_labels, font_size=9, font_weight='bold')
-    nx.draw_networkx_edges(graph, pos, edge_color='gray', width=2)
-    nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels, font_color='red')
-    
-    plt.title("Visualisasi Graf Kuliner Bandung (Tahap 2)", size=16)
-    plt.axis('off') # Matikan sumbu
-    plt.savefig('graf_kuliner_tahap2.png')
-    print("\nVisualisasi graf disimpan sebagai 'graf_kuliner_tahap2.png'")
+    # Mencetak header kolom (indeks 0 - 23, karena ada 24 simpul)
+    header = "Idx   " + " ".join([f"{i:2d}" for i in range(len(node_list))])
+    print(header)
+    print("----  " + "---" * len(node_list))
+
+    # Mencetak baris matriks dengan indeks barisnya
+    for i, row in enumerate(adj_matrix):
+        row_str = " ".join([f"{val:2d}" for val in row])
+        print(f"[{i:02d}] | {row_str}")
+        
+    print("--- (Akhir Adjacency Matrix) ---")
+    print("\n======================================================")
 
 
-# --- Main Execution ---
+def main():
+    # Buat graf persis seperti di program utama Anda
+    # [RALAT] Fungsi ini hanya mengembalikan G (graf)
+    G = create_bandung_culinary_graph()
+    
+    # Panggil fungsi untuk menampilkan model formalnya
+    tampilkan_representasi_formal(G)
+
 if __name__ == "__main__":
-    # 1. Buat Graf
-    G_kuliner = create_culinary_graph()
-    
-    # 2. Cetak Representasi (Sesuai Tahap 2)
-    print_graph_representations(G_kuliner)
-    
-    # 3. Visualisasi (Sesuai Tahap 4, tapi baik untuk cek)
-    visualize_culinary_graph(G_kuliner)
+    main()
