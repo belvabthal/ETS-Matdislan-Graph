@@ -278,10 +278,10 @@ def final_tour_algorithm(graph, start, must_visit, end, TIME_BUDGET, MONEY_BUDGE
             running_log_cost += service_cost
             
             # 4. Buat pesan log
-            log_messages.append(f"   ...Menuju: <font color='yellow'>{current_node_in_segment}</font>")
+            log_messages.append(f"   ...Menuju: <font color='orange'>{current_node_in_segment}</font>")
             log_messages.append(f"      - Perjalanan: {int(travel_time)} menit")
             log_messages.append(f"      - Layanan: {int(service_time)} menit, Biaya: Rp {service_cost:,.0f}")
-            log_messages.append(f"      - Sisa Anggaran: Waktu=<font color='lightblue'>{int(TIME_BUDGET - running_log_time)}</font> mnt, Biaya=<font color='lightgreen'>Rp {MONEY_BUDGET - running_log_cost:,.0f}</font>")
+            log_messages.append(f"      - Sisa Anggaran: Waktu=<font color='blue'>{int(TIME_BUDGET - running_log_time)}</font> mnt, Biaya=<font color='lightgreen'>Rp {MONEY_BUDGET - running_log_cost:,.0f}</font>")
             
             previous_node_in_segment = current_node_in_segment
 
@@ -350,10 +350,10 @@ def final_tour_algorithm(graph, start, must_visit, end, TIME_BUDGET, MONEY_BUDGE
             running_log_cost += service_cost
             
             # 4. Buat pesan log
-            log_messages.append(f"   ...Menuju: <font color='yellow'>{current_node_in_segment}</font>")
+            log_messages.append(f"   ...Menuju: <font color='orange'>{current_node_in_segment}</font>")
             log_messages.append(f"      - Perjalanan: {int(travel_time)} menit")
             log_messages.append(f"      - Layanan: {int(service_time)} menit, Biaya: Rp {service_cost:,.0f}")
-            log_messages.append(f"      - Sisa Anggaran: Waktu=<font color='lightblue'>{int(TIME_BUDGET - running_log_time)}</font> mnt, Biaya=<font color='lightgreen'>Rp {MONEY_BUDGET - running_log_cost:,.0f}</font>")
+            log_messages.append(f"      - Sisa Anggaran: Waktu=<font color='blue'>{int(TIME_BUDGET - running_log_time)}</font> mnt, Biaya=<font color='lightgreen'>Rp {MONEY_BUDGET - running_log_cost:,.0f}</font>")
             
             previous_node_in_segment = current_node_in_segment
         
