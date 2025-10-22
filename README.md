@@ -141,7 +141,6 @@ pip install --upgrade networkx matplotlib pyqt6
 
 **GUI tidak muncul**
 - Pastikan running di environment yang support GUI
-- Untuk WSL: Install X Server (VcXsrv, Xming)
 
 **Stylesheet tidak load**
 - Pastikan file `styles.qss` berada di direktori yang sama dengan `gui_sigma.py`
@@ -157,8 +156,8 @@ Proyek ini dilisensikan di bawah **MIT License** - lihat file [LICENSE](LICENSE)
 ## 👤 Author
 
 **241524035 - Belva Abthal Hidayat**  
-**241524053 - Muhammad Fakhri Widodo**
-**241524056 - Muhammad Zein Arridho**
+**241524053 - Muhammad Fakhri Widodo**  
+**241524056 - Muhammad Zein Arridho**  
 Politeknik Negeri Bandung  
 2025
 
