@@ -4,17 +4,14 @@ from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                              QSpinBox, QPushButton, QListWidget, QTextEdit,
                              QMessageBox, QGroupBox, QListWidgetItem)
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont, QIcon  # <-- TAMBAHKAN INI (1 dari 2)
+from PyQt6.QtGui import QFont, QIcon  
 
-# Integrasi Matplotlib dengan PyQt6
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
-# Impor file logika kita
 import progresive_enriched_end0
 
 class MplCanvas(FigureCanvas):
-    """Canvas Matplotlib untuk diintegrasikan ke PyQt."""
     def __init__(self, parent=None, width=8, height=8, dpi=100):
         self.fig = Figure(figsize=(width, height), dpi=dpi)
         self.axes = self.fig.add_subplot(111)
@@ -24,32 +21,25 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # Inisialisasi data dari logic.py
         self.graph = progresive_enriched_end0.create_bandung_culinary_graph()
         self.locations = sorted(list(self.graph.nodes()))
 
-        # Konfigurasi window utama
         self.setWindowTitle("Perencana Tur Kuliner Bandung")
         self.setGeometry(100, 100, 1400, 800)
-        self.setWindowIcon(QIcon("AppsLogo.png"))  # <-- TAMBAHKAN INI (2 dari 2)
+        self.setWindowIcon(QIcon("AppsLogo.png"))  
 
-        # Layout utama (horizontal: panel kontrol di kiri, display di kanan)
         main_layout = QHBoxLayout()
 
-        # Buat dan tambahkan panel kontrol
         controls_panel = self._create_controls_panel()
-        main_layout.addWidget(controls_panel, 1) # Proporsi 1
+        main_layout.addWidget(controls_panel, 1)
 
-        # Buat dan tambahkan panel display
         display_panel = self._create_display_panel()
-        main_layout.addWidget(display_panel, 2) # Proporsi 2 (lebih besar)
+        main_layout.addWidget(display_panel, 2) 
 
-        # Set widget utama
         central_widget = QWidget()
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
 
-        # Muat stylesheet
         try:
             with open("styles.qss", "r") as f:
                 self.setStyleSheet(f.read())
@@ -57,29 +47,24 @@ class MainWindow(QMainWindow):
             print("Stylesheet 'styles.qss' tidak ditemukan. Menggunakan style default.")
 
     def _create_controls_panel(self):
-        """Menciptakan panel kiri yang berisi semua widget input."""
         panel_widget = QWidget()
         layout = QVBoxLayout(panel_widget)
         layout.setSpacing(15)
 
-        # --- Group Box: Input Utama ---
         input_group = QGroupBox("Tentukan Rute & Anggaran")
         input_layout = QGridLayout()
 
-        # Pilihan Titik Awal
         self.start_combo = QComboBox()
         self.start_combo.addItems(self.locations)
         input_layout.addWidget(QLabel("Titik Awal:"), 0, 0)
         input_layout.addWidget(self.start_combo, 0, 1)
 
-        # Pilihan Titik Akhir
         self.end_combo = QComboBox()
         self.end_combo.addItems(self.locations)
-        self.end_combo.setCurrentIndex(1) # Default ke item kedua
+        self.end_combo.setCurrentIndex(1)
         input_layout.addWidget(QLabel("Tujuan Akhir:"), 1, 0)
         input_layout.addWidget(self.end_combo, 1, 1)
 
-        # Input Anggaran Waktu
         self.time_budget_spin = QSpinBox()
         self.time_budget_spin.setRange(1, 48)
         self.time_budget_spin.setValue(8)
@@ -87,7 +72,6 @@ class MainWindow(QMainWindow):
         input_layout.addWidget(QLabel("Anggaran Waktu:"), 2, 0)
         input_layout.addWidget(self.time_budget_spin, 2, 1)
         
-        # Input Anggaran Biaya
         self.money_budget_spin = QSpinBox()
         self.money_budget_spin.setRange(0, 10000000)
         self.money_budget_spin.setSingleStep(10000)
@@ -99,7 +83,6 @@ class MainWindow(QMainWindow):
         input_group.setLayout(input_layout)
         layout.addWidget(input_group)
 
-        # --- Group Box: Lokasi Wajib ---
         must_visit_group = QGroupBox("Pilih Lokasi Wajib Kunjung")
         must_visit_layout = QVBoxLayout()
         
@@ -112,13 +95,11 @@ class MainWindow(QMainWindow):
         must_visit_group.setLayout(must_visit_layout)
         layout.addWidget(must_visit_group)
 
-        # Tombol Eksekusi
         self.run_button = QPushButton("Rencanakan Tur")
         self.run_button.setFixedHeight(40)
         self.run_button.clicked.connect(self._run_planning)
         layout.addWidget(self.run_button)
         
-        # --- Group Box: Hasil Analisis ---
         results_group = QGroupBox("Hasil Analisis")
         results_layout = QVBoxLayout()
         self.results_text = QTextEdit()
@@ -131,31 +112,25 @@ class MainWindow(QMainWindow):
         return panel_widget
 
     def _create_display_panel(self):
-        """Menciptakan panel kanan untuk menampilkan visualisasi graf."""
         panel_widget = QWidget()
         layout = QVBoxLayout(panel_widget)
         
-        # Buat canvas Matplotlib
         self.canvas = MplCanvas(self, width=8, height=8, dpi=100)
         
-        # Gambar graf awal (tanpa rute)
         progresive_enriched_end0.visualize_tour(self.graph, [], "", "", 0, 0, self.canvas.axes)
         
         layout.addWidget(self.canvas)
         return panel_widget
 
     def _run_planning(self):
-        """Fungsi yang dipanggil ketika tombol 'Rencanakan Tur' ditekan."""
-        # 1. Ambil semua input dari GUI
         start_point = self.start_combo.currentText()
         end_point = self.end_combo.currentText()
-        time_budget = self.time_budget_spin.value() * 60 # Konversi ke menit
+        time_budget = self.time_budget_spin.value() * 60 
         money_budget = self.money_budget_spin.value()
         
         selected_items = self.must_visit_list.selectedItems()
         must_visit_points = [item.text() for item in selected_items]
 
-        # 2. Validasi Input
         if start_point == end_point:
             QMessageBox.warning(self, "Input Tidak Valid", "Titik awal dan tujuan akhir tidak boleh sama.")
             return
@@ -165,35 +140,27 @@ class MainWindow(QMainWindow):
         if end_point in must_visit_points:
             must_visit_points.remove(end_point)
 
-        # 3. Panggil fungsi logika
         self.results_text.setText("Menganalisis rute, mohon tunggu...")
-        QApplication.processEvents() # Paksa GUI update
+        QApplication.processEvents() 
 
         tour, final_time, final_cost, log = progresive_enriched_end0.final_tour_algorithm(
             self.graph, start_point, must_visit_points, end_point, time_budget, money_budget
         )
 
-        # 4. Tampilkan Hasil
-        # Tampilkan hasil teks
         self._update_results_text(tour, final_time, final_cost, time_budget, money_budget, log)
         
-        # Tampilkan hasil visualisasi graf
         progresive_enriched_end0.visualize_tour(self.graph, tour, start_point, end_point, final_time, final_cost, self.canvas.axes)
         self.canvas.draw()
     
     def _update_results_text(self, tour, final_time, final_cost, time_budget, money_budget, log):
-        """Memformat dan menampilkan hasil analisis pada QTextEdit."""
         
-        # Gabungkan log proses
         log_html = "<br>".join(log)
 
-        # Buat ringkasan hasil
         summary_html = "<h3>Ringkasan Hasil Tur</h3>"
         summary_html += f"<b>Rute Lengkap:</b> {' → '.join(tour)}<br>"
         summary_html += f"<b>Total Waktu Aktual:</b> {int(final_time)} menit ({final_time/60:.1f} jam)<br>"
         summary_html += f"<b>Total Biaya Aktual:</b> Rp {final_cost:,.0f}<br><br>"
         
-        # Mengubah warna sisa anggaran
         time_color = 'green'
         if (time_budget - final_time) < 0:
             time_color = 'red'
@@ -205,7 +172,6 @@ class MainWindow(QMainWindow):
         summary_html += f"<b>Sisa Anggaran Waktu:</b> <font color='{time_color}'>{int(time_budget - final_time)} menit</font><br>"
         summary_html += f"<b>Sisa Anggaran Biaya:</b> <font color='{money_color}'>Rp {money_budget - final_cost:,.0f}</font>"
 
-        # Tampilkan di QTextEdit
         self.results_text.setHtml(f"<h3>Log Perencanaan</h3>{log_html}<br><hr>{summary_html}")
 
 

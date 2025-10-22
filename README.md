@@ -1,4 +1,4 @@
-# 🗺️ Bandung Culinary Tour Planner
+# 🗺️ Optimasi Itinerary Kuliner Viral Bandung Menggunakan Algoritma Dijkstra dan Enrichment Path
 
 <div align="center">
 
@@ -17,14 +17,14 @@ Aplikasi pintar untuk merencanakan perjalanan kuliner di Bandung dengan optimasi
 
 ## 🎯 Overview
 
-Bandung Culinary Tour Planner adalah aplikasi desktop yang membantu Anda merencanakan tur wisata kuliner di Bandung secara optimal. Dengan menggunakan algoritma graf (Modified Dijkstra dan Progressive Pathfinding), aplikasi ini memberikan rekomendasi rute terbaik berdasarkan batasan waktu dan anggaran biaya Anda.
+Optimasi Itinerary Kuliner Viral Bandung Menggunakan Algoritma Dijkstra dan Enrichment Path adalah aplikasi desktop yang membantu Anda merencanakan tur wisata kuliner di Bandung secara optimal. Dengan menggunakan algoritma graf (Modified Dijkstra dan Progressive Pathfinding), aplikasi ini memberikan rekomendasi rute terbaik berdasarkan batasan waktu dan anggaran biaya Anda.
 
 **Fitur Utama:**
-- **24 Lokasi Wisata Kuliner** populer di Bandung
+- **23 Lokasi Wisata Kuliner** viral di Bandung
 - **Budget-Aware Routing** dengan batasan waktu dan biaya
 - **Must-Visit Points** untuk lokasi wajib kunjung
 - **Interactive Visualization** menggunakan graf NetworkX
-- **Modern GUI** dengan PyQt6 dan dark mode theme
+- **Modern GUI** dengan PyQt6
 
 ---
 
@@ -44,7 +44,7 @@ Bandung Culinary Tour Planner adalah aplikasi desktop yang membantu Anda merenca
 
 **1. Clone the Repository**
 ```bash
-git clone https://github.com/username/ETS-Matdislan-Graph.git
+git clone https://github.com/belvabthal/ETS-Matdislan-Graph.git
 cd ETS-Matdislan-Graph
 ```
 
@@ -62,22 +62,12 @@ python gui_sigma.py
 
 ## 🎮 How to Use
 
-### GUI Mode (Recommended)
-
 1. **Set Starting Point**: Pilih lokasi awal perjalanan
 2. **Set Destination**: Pilih lokasi tujuan akhir
 3. **Set Budget**: Tentukan anggaran waktu (jam) dan biaya (Rupiah)
 4. **Select Must-Visit** (Optional): Pilih lokasi yang wajib dikunjungi
 5. **Plan Tour**: Klik tombol "Rencanakan Tur"
 6. **View Results**: Lihat rute optimal dan visualisasi graf
-
-### CLI Mode
-
-```bash
-python progresive_enriched_end_not0.py
-```
-
-Ikuti instruksi di terminal untuk input. Hasil visualisasi akan disimpan sebagai `bandung_tour_kuliner_budget.png`.
 
 ---
 
@@ -87,7 +77,6 @@ Ikuti instruksi di terminal untuk input. Hasil visualisasi akan disimpan sebagai
 ETS-Matdislan-Graph/
 │
 ├── progresive_enriched_end0.py      # Core logic: graf, algoritma, visualisasi
-├── progresive_enriched_end_not0.py  # CLI version
 ├── gui_sigma.py                     # PyQt6 GUI application
 ├── adjacencylist_matrix.py          # Demo adjacency representation
 ├── styles.qss                       # Dark mode stylesheet
@@ -100,7 +89,7 @@ ETS-Matdislan-Graph/
 ## 🧠 Algorithm Overview
 
 ### Graph Model
-- **Nodes**: 24 lokasi wisata dengan atribut posisi, waktu layanan, dan biaya
+- **Nodes**: 23 lokasi wisata dengan atribut posisi, waktu layanan, dan biaya
 - **Edges**: Koneksi antar lokasi dengan bobot waktu tempuh (menit)
 
 ### Progressive Enriched Pathfinding
@@ -111,7 +100,7 @@ ETS-Matdislan-Graph/
 
 ### Visualization
 - NetworkX graph rendering dengan Matplotlib
-- Color-coded nodes (start: hijau, end: merah, visited: kuning)
+- Color-coded nodes (start: Oranye, end: merah, visited: kuning)
 - Route highlighting dengan numbered sequence
 - Real-time budget tracking
 
@@ -119,19 +108,13 @@ ETS-Matdislan-Graph/
 
 ## 🗺️ Available Locations
 
-Aplikasi mencakup 24 lokasi wisata kuliner populer di Bandung:
+Aplikasi mencakup 23 lokasi wisata kuliner viral di Bandung:
 
-**Area Pusat Kota**: Alun-Alun Bandung, Jalan Braga, Gedung Sate, Waroeng Lokal
+**Area Pusat Kota & Selatan**: Waroeng Lokal, Dimsum Sembilan Ayam, Toko Roti Sidodadi, Sudirman Street Bandung, Warung Bu Imas, Ramen Bajuri, Makaroni Squad, Mie Naripan, Jalan Braga, Emperao Pizza
 
-**Area Trans Studio**: Trans Studio Bandung, Saung Angklung Udjo
+**Area Dago, Cihapit, Trunojoyo**: Drunk Baker, Bakmie Tjo Kin, Five Monkeys Burger, Sate Jando Belakang Gd Sate, Iga Bakar Si Jangkung, Kedai Roti Ibu Saya
 
-**Area Dago**: Cihampelas Walk, Dago Pakar, Punclut, Museum Srihadi Soedarsono
-
-**Area Lembang**: Floating Market, Farmhouse, De Ranch, Villa Niis, Sarae Hills
-
-**Kuliner Spot**: Warung Sate Bu Ngantuk, Kurokoffe, Jonn & Sons, Pipinos Bakery, Ramen Bajuri
-
-Dan masih banyak lagi...
+**Area Sukajadi & Ciumbuleuit (Utara)**: Mie Soobek, Pipinos Bakery, Warung Sate Bu Ngantuk, Kurokoffe, Wandas Club, Jonn & Sons, Harmony Dimsum
 
 ---
 
@@ -140,11 +123,6 @@ Dan masih banyak lagi...
 **Standard Run**
 ```bash
 python gui_sigma.py
-```
-
-**CLI Version**
-```bash
-python progresive_enriched_end_not0.py
 ```
 
 **Demo Graph Representation**
@@ -178,7 +156,9 @@ Proyek ini dilisensikan di bawah **MIT License** - lihat file [LICENSE](LICENSE)
 
 ## 👤 Author
 
-
+**241524035 - Belva Abthal Hidayat**  
+**241524053 - Muhammad Fakhri Widodo**
+**241524056 - Muhammad Zein Arridho**
 Politeknik Negeri Bandung  
 2025
 
@@ -195,10 +175,10 @@ Politeknik Negeri Bandung
 
 <div align="center">
 
-**Made with ❤️ by ...**
+**Made with ❤️ by Belva, Fakhri, Zein**
 
 *"Jadikan perjalanan kulinermu di Bandung lebih efisien, hemat, dan menyenangkan!"*
 
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?style=flat&logo=github)](https://github.com/username/ETS-Matdislan-Graph)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?style=flat&logo=github)](https://github.com/belvabthal/ETS-Matdislan-Graph)
 
 </div>
