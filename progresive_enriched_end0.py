@@ -16,8 +16,9 @@ def create_bandung_culinary_graph():
     locations_data = {
         # Format: 'Nama Lokasi': {'pos': (x, y), 'waktu_layanan': menit, 'biaya': IDR}
         # Area Pusat Kota & Selatan
-        'Waroeng Lokal': {'pos': (360, 509), 'waktu_layanan': 0, 'biaya': 0},
-        'Dimsum Sembilan Ayam': {'pos': (345, 740), 'waktu_layanan': 10, 'biaya': 45000},
+        'Stasiun Bandung': {'pos': (360, 509), 'waktu_layanan': 0, 'biaya': 0},
+        'Waroeng Lokal': {'pos': (365, 530), 'waktu_layanan': 20, 'biaya': 85000},
+        'Dimsum Sembilan Ayam': {'pos': (345, 545), 'waktu_layanan': 10, 'biaya': 45000},
         'Toko Roti Sidodadi': {'pos': (408, 485), 'waktu_layanan': 5, 'biaya': 100000},
         'Sudirman Street Bandung': {'pos': (415, 380), 'waktu_layanan': 15, 'biaya': 50000},
         'Warung Bu Imas': {'pos': (515, 360), 'waktu_layanan': 10, 'biaya': 60000},
@@ -51,9 +52,9 @@ def create_bandung_culinary_graph():
     
     edges = [
         # Edges Awal Anda
-        ('Warung Bu Imas', 'Waroeng Lokal', 9),
+        ('Warung Bu Imas', 'Stasiun Bandung', 9),
         ('Warung Bu Imas', 'Jalan Braga', 7),
-        ('Waroeng Lokal', 'Sate Jando Belakang Gd Sate', 8),
+        ('Stasiun Bandung', 'Sate Jando Belakang Gd Sate', 8),
         ('Jalan Braga', 'Sate Jando Belakang Gd Sate', 4),
         ('Emperano Pizza', 'Five Monkeys Burger', 9),
         ('Emperano Pizza', 'Mie Naripan', 8),
@@ -61,11 +62,12 @@ def create_bandung_culinary_graph():
         ('Drunk Baker', 'Sudirman Street Bandung', 7),
         ('Mie Naripan', 'Bakmie Tjo Kin', 6),
         ('Bakmie Tjo Kin', 'Sate Jando Belakang Gd Sate', 3),
-        ('Bakmie Tjo Kin', 'Waroeng Lokal', 10),
+        ('Bakmie Tjo Kin', 'Stasiun Bandung', 10),
+        ('Stasiun Bandung', 'Waroeng Lokal', 1),
         ('Jalan Braga', 'Makaroni Squad', 7),
         ('Mie Naripan', 'Makaroni Squad', 8),
         ('Kedai Roti Ibu Saya', 'Sate Jando Belakang Gd Sate', 5),
-        ('Kedai Roti Ibu Saya', 'Waroeng Lokal', 8),
+        ('Kedai Roti Ibu Saya', 'Stasiun Bandung', 8),
         ('Kedai Roti Ibu Saya', 'Jonn & Sons', 7),
         ('Kurokoffe', 'Wandas Club', 1),
         ('Jalan Braga', 'Toko Roti Sidodadi', 4),
@@ -80,8 +82,8 @@ def create_bandung_culinary_graph():
         ('Mie Soobek', 'Iga Bakar Si Jangkung', 14),
 
         # [PENAMBAHAN] 8 Edge baru dari data "Google Maps" untuk konektivitas
-        ('Sudirman Street Bandung', 'Waroeng Lokal', 7),
-        ('Dimsum Sembilan Ayam', 'Waroeng Lokal', 8),
+        ('Sudirman Street Bandung', 'Stasiun Bandung', 7),
+        ('Dimsum Sembilan Ayam', 'Stasiun Bandung', 8),
         ('Waroeng Lokal', 'Dimsum Sembilan Ayam', 3),
         ('Five Monkeys Burger', 'Sate Jando Belakang Gd Sate', 5),
         ('Mie Soobek', 'Pipinos Bakery', 12),
@@ -95,8 +97,6 @@ def create_bandung_culinary_graph():
     return G
 
 # --- TAHAP 3: LOGIKA INTI ALGORITMA ---
-# (Tidak ada perubahan di bagian ini)
-
 def dijkstra(graph, start, end):
     if start not in graph or end not in graph: return float('inf')
     distances = {node: float('inf') for node in graph.nodes()}
@@ -166,16 +166,22 @@ def find_progressive_enriched_path(graph, start, end, available_nodes,
         
         current = best_next_stop
         
+        # =============================================== #
+        #              BLOK KRUSIAL YANG BENAR            #
+        # =============================================== #
+        # Hanya tambahkan biaya/waktu jika BUKAN tujuan akhir segmen ('end')
         if current != end:
             segment_time += graph.nodes[current].get('waktu_layanan', 0)
             segment_cost += graph.nodes[current].get('biaya', 0)
             
             if current in remaining_nodes:
                 remaining_nodes.remove(current)
+        # =============================================== #
         
         if current == end:
             break
             
+    # Mengembalikan HANYA waktu tempuh total segmen + biaya/waktu stopover
     return path, segment_time, segment_cost, "Sukses"
 
 def final_tour_algorithm(graph, start, must_visit, end, TIME_BUDGET, MONEY_BUDGET):
@@ -188,7 +194,7 @@ def final_tour_algorithm(graph, start, must_visit, end, TIME_BUDGET, MONEY_BUDGE
     log_messages = [
         f"Anggaran Waktu: {TIME_BUDGET} menit ({TIME_BUDGET/60:.1f} jam)",
         f"Anggaran Biaya: Rp {MONEY_BUDGET:,.0f}",
-        f"Status Awal: Waktu={total_time} menit, Biaya=Rp {total_cost:,.0f}\n" + "="*30
+        f"Status Awal: Waktu={int(total_time)} menit, Biaya=Rp {total_cost:,.0f}\n" + "="*30
     ]
 
     while unvisited_must_visit:
@@ -228,8 +234,22 @@ def final_tour_algorithm(graph, start, must_visit, end, TIME_BUDGET, MONEY_BUDGE
             return final_tour, total_time, total_cost, log_messages
 
         final_tour.extend(segment[1:])
-        total_time += seg_time
-        total_cost += seg_cost
+        
+        # =============================================== #
+        #          LOGIKA PENAMBAHAN BIAYA YANG BENAR     #
+        # =============================================== #
+        # seg_time = total waktu tempuh + total waktu layanan stopover
+        # seg_cost = total biaya stopover
+        
+        total_time += seg_time # Tambahkan waktu tempuh + layanan stopover
+        total_cost += seg_cost # Tambahkan biaya stopover
+        
+        # Tambahkan waktu layanan & biaya dari tujuan segmen ('must_visit' node)
+        if current_pos != next_destination: # Pastikan kita benar-benar bergerak
+            total_time += graph.nodes[next_destination].get('waktu_layanan', 0)
+            total_cost += graph.nodes[next_destination].get('biaya', 0)
+        # =============================================== #
+        
         log_messages.append(f"-> Rute Ditemukan: {' → '.join(segment[1:])}")
         log_messages.append(f"   Status Anggaran: Waktu={int(total_time)} menit, Biaya=Rp {total_cost:,.0f}")
         
@@ -250,8 +270,9 @@ def final_tour_algorithm(graph, start, must_visit, end, TIME_BUDGET, MONEY_BUDGE
     
     if status == "Sukses" and len(segment) > 1:
         final_tour.extend(segment[1:])
-        total_time += seg_time
-        total_cost += seg_cost
+        total_time += seg_time # 'seg_time' sudah termasuk waktu tempuh
+        total_cost += seg_cost # 'seg_cost' sudah termasuk biaya stopover (jika ada)
+        # Kita TIDAK menambahkan biaya/waktu 'end' node (tujuan akhir tur), sesuai asumsi.
         log_messages.append(f"-> Rute Ditemukan: {' → '.join(segment[1:])}")
     elif status != "Sukses":
         log_messages.append(f"-> ❌ GAGAL: {status}")
@@ -275,6 +296,11 @@ def visualize_tour(graph, tour, start_point, end_point, total_time_spent, total_
     )
     ax.set_title(title, fontsize=10, fontweight='bold')
 
+    # Periksa apakah 'pos' ada sebelum menggambar
+    if not pos:
+        ax.text(0.5, 0.5, "Data posisi tidak tersedia.", ha='center', va='center')
+        return
+
     nx.draw_networkx_nodes(graph, pos, node_color='lightgray', node_size=500, ax=ax)
     
     labels_to_draw = {n: '\n'.join(textwrap.wrap(n, 12)) for n in graph.nodes() if n in pos}
@@ -291,12 +317,16 @@ def visualize_tour(graph, tour, start_point, end_point, total_time_spent, total_
     if end_point in graph.nodes():
         node_colors[end_point] = 'lightcoral'
     
-    filtered_node_colors = [node_colors.get(node, 'lightgray') for node in graph.nodes()]
-    nx.draw_networkx_nodes(graph, pos, node_color=filtered_node_colors, node_size=600, ax=ax)
+    # Filter node colors hanya untuk node yang ada di 'pos'
+    nodes_with_pos = list(pos.keys())
+    filtered_node_colors = [node_colors.get(node, 'lightgray') for node in nodes_with_pos]
+    nx.draw_networkx_nodes(graph, pos, nodelist=nodes_with_pos, node_color=filtered_node_colors, node_size=600, ax=ax)
+
 
     if len(tour) > 1:
-        tour_edges = [(tour[i], tour[i+1]) for i in range(len(tour)-1)]
-        nx.draw_networkx_edges(graph, pos, edgelist=tour_edges,
+        # Filter tour_edges hanya untuk edge yang kedua nodenya ada di 'pos'
+        valid_tour_edges = [(u, v) for u, v in zip(tour[:-1], tour[1:]) if u in pos and v in pos]
+        nx.draw_networkx_edges(graph, pos, edgelist=valid_tour_edges,
                               width=2.0, edge_color='red', arrows=True, arrowsize=15, ax=ax)
     
     for i, node in enumerate(tour):
@@ -310,4 +340,7 @@ def visualize_tour(graph, tour, start_point, end_point, total_time_spent, total_
                         plt.Line2D([0], [0], marker='o', color='w', label='Dikunjungi', markerfacecolor='gold', ms=10),
                         plt.Line2D([0], [0], color='red', lw=2, label='Rute Tur')]
     ax.legend(handles=legend_elements, loc='upper right', fontsize=8)
-    ax.figure.tight_layout()
+    try: # Gunakan try-except untuk mencegah error jika figure belum siap
+      ax.figure.tight_layout()
+    except Exception as e:
+      print(f"Warning: Could not apply tight_layout: {e}")
