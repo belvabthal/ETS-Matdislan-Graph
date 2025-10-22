@@ -16,33 +16,33 @@ def create_bandung_culinary_graph():
     locations_data = {
         # Format: 'Nama Lokasi': {'pos': (x, y), 'waktu_layanan': menit, 'biaya': IDR}
         # Area Pusat Kota & Selatan 360
-        'Waroeng Lokal': {'pos': (160, 500), 'waktu_layanan': 20, 'biaya': 85000},
-        'Dimsum Sembilan Ayam': {'pos': (345, 545), 'waktu_layanan': 10, 'biaya': 45000},
-        'Toko Roti Sidodadi': {'pos': (408, 485), 'waktu_layanan': 5, 'biaya': 100000},
-        'Sudirman Street Bandung': {'pos': (415, 380), 'waktu_layanan': 15, 'biaya': 50000},
-        'Warung Bu Imas': {'pos': (515, 360), 'waktu_layanan': 10, 'biaya': 60000},
-        'Ramen Bajuri (Lengkong)': {'pos': (560, 310), 'waktu_layanan': 20, 'biaya': 40000},
-        'Makaroni Squad': {'pos': (538, 420), 'waktu_layanan': 7, 'biaya': 20000},
-        'Mie Naripan': {'pos': (603, 440), 'waktu_layanan': 20, 'biaya': 86000},
+        'Waroeng Lokal': {'pos': (180, 460), 'waktu_layanan': 20, 'biaya': 85000},
+        'Dimsum Sembilan Ayam': {'pos': (165, 565), 'waktu_layanan': 10, 'biaya': 45000},
+        'Toko Roti Sidodadi': {'pos': (288, 465), 'waktu_layanan': 5, 'biaya': 100000},
+        'Sudirman Street Bandung': {'pos': (275, 360), 'waktu_layanan': 15, 'biaya': 50000},
+        'Warung Bu Imas': {'pos': (475, 370), 'waktu_layanan': 10, 'biaya': 60000},
+        'Ramen Bajuri (Lengkong)': {'pos': (500, 290), 'waktu_layanan': 20, 'biaya': 40000},
+        'Makaroni Squad': {'pos': (498, 440), 'waktu_layanan': 7, 'biaya': 20000},
+        'Mie Naripan': {'pos': (603, 410), 'waktu_layanan': 20, 'biaya': 86000},
         'Jalan Braga': {'pos': (580, 500), 'waktu_layanan': 120, 'biaya': 300000},
         'Emperano Pizza': {'pos': (780, 290), 'waktu_layanan': 25, 'biaya': 80000},
 
         # Area Dago, Cihapit, Trunojoyo
-        'Drunk Baker': {'pos': (658, 620), 'waktu_layanan': 10, 'biaya': 100000},
-        'Bakmie Tjo Kin': {'pos': (700, 690), 'waktu_layanan': 15, 'biaya': 50000},
+        'Drunk Baker': {'pos': (658, 640), 'waktu_layanan': 10, 'biaya': 100000},
+        'Bakmie Tjo Kin': {'pos': (710, 720), 'waktu_layanan': 15, 'biaya': 50000},
         'Five Monkeys Burger': {'pos': (740, 640), 'waktu_layanan': 20, 'biaya': 100000},
         'Sate Jando Belakang Gd Sate': {'pos': (630, 750), 'waktu_layanan': 10, 'biaya': 35000},
-        'Iga Bakar Si Jangkung': {'pos': (500, 800), 'waktu_layanan': 60, 'biaya': 80000},
-        'Kedai Roti Ibu Saya': {'pos': (490, 880), 'waktu_layanan': 10, 'biaya': 30000},
+        'Iga Bakar Si Jangkung': {'pos': (500, 770), 'waktu_layanan': 60, 'biaya': 80000},
+        'Kedai Roti Ibu Saya': {'pos': (490, 840), 'waktu_layanan': 10, 'biaya': 30000},
         
         # Area Sukajadi & Ciumbuleuit (Utara)
-        'Mie Soobek': {'pos': (280, 890), 'waktu_layanan': 15, 'biaya': 55000},
-        'Pipinos Bakery': {'pos': (330, 980), 'waktu_layanan': 45, 'biaya': 50000},
-        'Warung Sate Bu Ngantuk': {'pos': (300, 1000), 'waktu_layanan': 60, 'biaya': 60000},
-        'Kurokoffe': {'pos': (280, 1050), 'waktu_layanan': 45, 'biaya': 45000},
-        'Wandas Club': {'pos': (270, 1030), 'waktu_layanan': 20, 'biaya': 80000},
-        'Jonn & Sons': {'pos': (250, 1100), 'waktu_layanan': 45, 'biaya': 50000},
-        'Harmony Dimsum': {'pos': (150, 1200), 'waktu_layanan': 15, 'biaya': 70000},
+        'Mie Soobek': {'pos': (280, 810), 'waktu_layanan': 15, 'biaya': 55000},
+        'Pipinos Bakery': {'pos': (330, 900), 'waktu_layanan': 45, 'biaya': 50000},
+        'Warung Sate Bu Ngantuk': {'pos': (350, 1040), 'waktu_layanan': 60, 'biaya': 60000},
+        'Kurokoffe': {'pos': (290, 1000), 'waktu_layanan': 45, 'biaya': 45000},
+        'Wandas Club': {'pos': (230, 980), 'waktu_layanan': 20, 'biaya': 80000},
+        'Jonn & Sons': {'pos': (260, 1110), 'waktu_layanan': 45, 'biaya': 50000},
+        'Harmony Dimsum': {'pos': (200, 1170), 'waktu_layanan': 15, 'biaya': 70000},
     }
 
 
@@ -305,6 +305,11 @@ def visualize_tour(graph, tour, start_point, end_point, total_time_spent, total_
                             labels=labels_to_draw)
     
     nx.draw_networkx_edges(graph, pos, width=1, alpha=0.3, ax=ax)
+
+    edge_weights = nx.get_edge_attributes(graph, 'weight')
+    # Filter edge_weights hanya untuk edge yang nodenya ada di 'pos'
+    valid_edge_weights = {(u, v): w for (u, v), w in edge_weights.items() if u in pos and v in pos}
+    nx.draw_networkx_edge_labels(graph, pos, edge_labels=valid_edge_weights, font_size=7, ax=ax, label_pos=0.3)
 
     tour_nodes = set(tour)
     node_colors = {node: ('gold' if node in tour_nodes else 'lightgray') for node in graph.nodes()}
